@@ -8,9 +8,11 @@ import MemberSelector from "../features/praise/components/MemberSelector.jsx";
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
   background: #222222;
   position: relative;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Header = styled.div`
@@ -90,9 +92,8 @@ const OptionsRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 36px;
-  margin-top: 54px;
-  margin-bottom: 20px;
+  width: 338px; /* MemberSelector 그리드 너비: (160px * 2) + 18px gap */
+  margin: 54px auto 20px auto;
 `;
 
 const CheckboxContainer = styled.div`
@@ -140,6 +141,15 @@ const OptionButton = styled.button`
   }
 `;
 
+const ContentWrapper = styled.div`
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+  min-height: 0; /* flex item이 overflow를 제대로 처리하도록 */
+`;
+
 const SendButton = styled.button`
   width: 157px;
   height: 49px;
@@ -150,9 +160,10 @@ const SendButton = styled.button`
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  margin-top: 132px;
+  margin-top: auto;
   margin-bottom: 20px;
   cursor: pointer;
+  flex-shrink: 0;
   
   font-family: "Pretendard", sans-serif;
   font-weight: 600;
@@ -238,35 +249,37 @@ export default function PraisePage() {
         <Title>칭찬하고 싶은 사람을 선택해 주세요</Title>
       </Header>
 
-      <CategoryCard>
-        <Emoji>{currentCategory.emoji}</Emoji>
-        <CategoryText>{currentCategory.text}</CategoryText>
-      </CategoryCard>
+      <ContentWrapper>
+        <CategoryCard>
+          <Emoji>{currentCategory.emoji}</Emoji>
+          <CategoryText>{currentCategory.text}</CategoryText>
+        </CategoryCard>
 
-      <OptionsRow>
-        <CheckboxContainer>
-          <Checkbox
-            type="checkbox"
-            id="anonymous"
-            checked={isAnonymous}
-            onChange={(e) => setIsAnonymous(e.target.checked)}
-          />
-          <CheckboxLabel htmlFor="anonymous">익명</CheckboxLabel>
-        </CheckboxContainer>
-        
-        <OptionButton onClick={handleSkip}>
-          건너뛰기
-          <SkipIcon />
-        </OptionButton>
-      </OptionsRow>
+        <OptionsRow>
+          <CheckboxContainer>
+            <Checkbox
+              type="checkbox"
+              id="anonymous"
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+            />
+            <CheckboxLabel htmlFor="anonymous">익명</CheckboxLabel>
+          </CheckboxContainer>
+          
+          <OptionButton onClick={handleSkip}>
+            건너뛰기
+            <SkipIcon />
+          </OptionButton>
+        </OptionsRow>
 
-      <MemberSelector
-        users={users}
-        selectedUserId={selectedUserId}
-        onSelect={setSelectedUserId}
-      />
+        <MemberSelector
+          users={users}
+          selectedUserId={selectedUserId}
+          onSelect={setSelectedUserId}
+        />
 
-      <SendButton onClick={handleSend}>보내기</SendButton>
+        <SendButton onClick={handleSend}>보내기</SendButton>
+      </ContentWrapper>
     </Container>
   );
 }
