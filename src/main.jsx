@@ -9,6 +9,7 @@ import RankingPage from "./pages/RankingPage.jsx";
 import ClubPage from "./pages/ClubPage.jsx";
 import MyPage from "./pages/MyPage.jsx";
 import PraisePage from "./pages/PraisePage.jsx";
+import ClubSearch from "./features/club/components/ClubSearch.jsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "club",
         element: <ClubPage />,
+      },
+      {
+        path: "club/search",
+        element: <ClubSearch />,
       },
       {
         path: "mypage",

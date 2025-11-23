@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { mockUserProfile } from "../../features/profile/mockData.js";
 
@@ -174,6 +175,7 @@ export default function ClubAddModal({
   onSelectClub,
   onClose,
 }) {
+  const navigate = useNavigate();
   const [phoneFrame, setPhoneFrame] = useState(null);
 
   // PhoneFrame 찾기
@@ -210,9 +212,8 @@ export default function ClubAddModal({
   };
 
   const handleAddClub = () => {
-    // TODO: 동아리 추가 기능 구현
-    console.log("동아리 추가하기");
     onClose();
+    navigate("/club/search");
   };
 
   // 프로필 목 데이터에서 동아리 목록 가져오기

@@ -7,9 +7,9 @@ const NavContainer = styled.nav`
   height: 80px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 60px;
-  padding: 24px 42px;
+  justify-content: space-between;
+  gap: 0;
+  padding: 24px 0;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   overflow: hidden;
@@ -31,6 +31,7 @@ const NavItem = styled.button`
   position: relative;
   min-width: 40px;
   height: 48px;
+  flex: 1;
   outline: none;
   
   &:focus {
