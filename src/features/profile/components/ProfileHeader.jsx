@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { mockUserProfile } from "../mockData.js";
+import useProfile from "../hooks/useProfile.js";
 
 // 로컬 assets 아이콘 경로
 const SETTING_ICON = "/assets/profile-setting.svg";
@@ -190,7 +190,10 @@ const EditIcon = styled.img`
   object-fit: contain;
 `;
 
-export default function ProfileHeader({ profile = mockUserProfile }) {
+export default function ProfileHeader({ profile: profileProp }) {
+  const { data: profileData, loading, error } = useProfile();
+  const profile = profileProp || profileData;
+
   const handleSettingClick = () => {
     console.log("Setting clicked");
     // TODO: 설정 페이지로 이동
@@ -205,6 +208,30 @@ export default function ProfileHeader({ profile = mockUserProfile }) {
     console.log("Add clicked");
     // TODO: 프로필 이미지 추가/변경
   };
+
+  if (loading) {
+    return (
+      <HeaderContainer>
+        <ProfileSection>
+          <ProfileInfo>
+            <UserName>로딩 중...</UserName>
+          </ProfileInfo>
+        </ProfileSection>
+      </HeaderContainer>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <HeaderContainer>
+        <ProfileSection>
+          <ProfileInfo>
+            <UserName>데이터를 불러올 수 없습니다.</UserName>
+          </ProfileInfo>
+        </ProfileSection>
+      </HeaderContainer>
+    );
+  }
 
   return (
     <HeaderContainer>

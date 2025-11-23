@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { mockClubs } from "../mockData.js";
+import useClubs from "../hooks/useClubs.js";
 
 const Container = styled.div`
   width: 100%;
@@ -258,15 +258,16 @@ export default function ClubSearch() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedClub, setSelectedClub] = useState(null);
+  const { data: clubs, loading, error } = useClubs();
 
   // 검색 결과 필터링 (최대 4개)
   const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) {
+    if (!searchQuery.trim() || !clubs) {
       return [];
     }
     
     const query = searchQuery.toLowerCase();
-    const filtered = mockClubs.filter(
+    const filtered = clubs.filter(
       (club) =>
         club.name.toLowerCase().includes(query) ||
         club.university.toLowerCase().includes(query) ||
@@ -274,7 +275,7 @@ export default function ClubSearch() {
     );
     // 최대 4개만 반환
     return filtered.slice(0, 4);
-  }, [searchQuery]);
+  }, [searchQuery, clubs]);
 
   const handleBack = () => {
     navigate(-1);
@@ -299,6 +300,48 @@ export default function ClubSearch() {
   };
 
   const isNextButtonDisabled = !selectedClub;
+
+  if (loading) {
+    return (
+      <Container>
+        <StatusBar>
+          <Time>9:41</Time>
+        </StatusBar>
+        <BackButton onClick={handleBack}>
+          <ChevronLeftIcon />
+        </BackButton>
+        <Title>동아리를 선택해 주세요</Title>
+        <SearchContainer>
+          <SearchInput
+            type="text"
+            placeholder="로딩 중..."
+            disabled
+          />
+        </SearchContainer>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <StatusBar>
+          <Time>9:41</Time>
+        </StatusBar>
+        <BackButton onClick={handleBack}>
+          <ChevronLeftIcon />
+        </BackButton>
+        <Title>동아리를 선택해 주세요</Title>
+        <SearchContainer>
+          <SearchInput
+            type="text"
+            placeholder="데이터를 불러올 수 없습니다."
+            disabled
+          />
+        </SearchContainer>
+      </Container>
+    );
+  }
 
   return (
     <Container>

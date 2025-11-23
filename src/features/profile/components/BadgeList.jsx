@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { mockBadges } from "../mockData.js";
+import useBadges from "../hooks/useBadges.js";
 
 const BadgeGrid = styled.div`
   display: grid;
@@ -36,7 +36,26 @@ const LockOverlay = styled.img`
   z-index: 1;
 `;
 
-export default function BadgeList({ badges = mockBadges }) {
+export default function BadgeList({ badges: badgesProp }) {
+  const { data: badgesData, loading, error } = useBadges();
+  const badges = badgesProp || badgesData || [];
+
+  if (loading) {
+    return (
+      <BadgeGrid>
+        <p style={{ color: "#ffffff", gridColumn: "1 / -1", textAlign: "center" }}>로딩 중...</p>
+      </BadgeGrid>
+    );
+  }
+
+  if (error || !badges || badges.length === 0) {
+    return (
+      <BadgeGrid>
+        <p style={{ color: "#ffffff", gridColumn: "1 / -1", textAlign: "center" }}>뱃지 데이터를 불러올 수 없습니다.</p>
+      </BadgeGrid>
+    );
+  }
+
   return (
     <BadgeGrid>
       {badges.map((badge) => (

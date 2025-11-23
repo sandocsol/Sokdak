@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ProgressBar from "../components/ProgressBar.jsx";
-import { getPraiseCategory, praiseCategories } from "../features/praise/mockData.js";
+import usePraiseCategories from "../features/praise/hooks/usePraiseCategories.js";
 import MemberSelector from "../features/praise/components/MemberSelector.jsx";
 
 const Container = styled.div`
@@ -192,7 +192,7 @@ const ContentWrapper = styled.div`
 const SendButton = styled.button`
   width: 157px;
   height: 49px;
-  background: #2ab7ca;
+  background: ${(props) => (props.disabled ? "#B9D0D3" : "#2ab7ca")};
   border: none;
   border-radius: 10px;
   display: flex;
@@ -201,7 +201,7 @@ const SendButton = styled.button`
   margin: 0 auto;
   margin-top: auto;
   margin-bottom: 20px;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   flex-shrink: 0;
   outline: none;
   
@@ -216,11 +216,11 @@ const SendButton = styled.button`
   color: white;
   
   &:hover {
-    opacity: 0.9;
+    opacity: ${(props) => (props.disabled ? 1 : 0.9)};
   }
   
   &:active {
-    opacity: 0.8;
+    opacity: ${(props) => (props.disabled ? 1 : 0.8)};
   }
 `;
 
@@ -254,12 +254,13 @@ const SkipIcon = () => (
 
 export default function PraisePage() {
   const navigate = useNavigate();
+  const { data: praiseCategories, loading, error } = usePraiseCategories();
   const [isAnonymous, setIsAnonymous] = useState(true); // 기본값: 익명 선택
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0); // 현재 칭찬 카테고리 인덱스
 
-  // 목 데이터에서 현재 칭찬 카테고리 가져오기
-  const currentCategory = getPraiseCategory(currentCategoryIndex);
-  const users = currentCategory.users; // 서버에서 받아온 4명의 사용자
+  // 현재 칭찬 카테고리 가져오기
+  const currentCategory = praiseCategories?.[currentCategoryIndex];
+  const users = currentCategory?.users || []; // 서버에서 받아온 4명의 사용자
 
   // 초기 선택: 아무것도 선택되지 않은 상태
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -277,10 +278,10 @@ export default function PraisePage() {
 
   const handleNext = () => {
     // 다음 칭찬으로 이동하거나 모든 칭찬을 완료하면 홈으로 이동
-    if (currentCategoryIndex < praiseCategories.length - 1) {
+    if (praiseCategories && currentCategoryIndex < praiseCategories.length - 1) {
       setCurrentCategoryIndex(currentCategoryIndex + 1);
     } else {
-      // 6개의 칭찬을 모두 완료했을 때 홈 화면으로 이동
+      // 모든 칭찬을 완료했을 때 홈 화면으로 이동
       navigate("/");
     }
   };
@@ -291,6 +292,11 @@ export default function PraisePage() {
   };
 
   const handleSend = () => {
+    // 선택된 사용자가 없으면 실행하지 않음
+    if (selectedUserId === null) {
+      return;
+    }
+    
     // 보내기: 선택한 사용자와 익명 여부를 저장하고 다음 칭찬으로 이동
     console.log("Selected user:", selectedUserId, "Anonymous:", isAnonymous);
     console.log("Category:", currentCategory.text);
@@ -299,6 +305,31 @@ export default function PraisePage() {
     // 다음 칭찬으로 이동
     handleNext();
   };
+
+  // 로딩 중이거나 에러가 있거나 데이터가 없을 때 처리
+  if (loading) {
+    return (
+      <Container>
+        <Title>로딩 중...</Title>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Title>데이터를 불러오는 중 오류가 발생했습니다.</Title>
+      </Container>
+    );
+  }
+
+  if (!praiseCategories || !currentCategory) {
+    return (
+      <Container>
+        <Title>데이터를 찾을 수 없습니다.</Title>
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -345,7 +376,9 @@ export default function PraisePage() {
           onSelect={setSelectedUserId}
         />
 
-        <SendButton onClick={handleSend}>보내기</SendButton>
+        <SendButton onClick={handleSend} disabled={selectedUserId === null}>
+          보내기
+        </SendButton>
       </ContentWrapper>
     </Container>
   );

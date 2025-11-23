@@ -1,0 +1,75 @@
+[
+  {
+    "id": 1,
+    "name": "첫 칭찬",
+    "imageUrl": "http://localhost:3845/assets/b78e29d981f00ab476b3b3a00ead5e3f9018c3b4.svg",
+    "isEarned": true
+  },
+  {
+    "id": 2,
+    "name": "칭찬 마스터",
+    "imageUrl": "http://localhost:3845/assets/510210ad5d72382ec47a392bbbf9e2e73364b79a.svg",
+    "isEarned": false
+  },
+  {
+    "id": 3,
+    "name": "인기인",
+    "imageUrl": "http://localhost:3845/assets/59322eeb227f36ef30f3a37921930bc8bd0eacfc.svg",
+    "isEarned": false
+  },
+  {
+    "id": 4,
+    "name": "칭찬 전도사",
+    "imageUrl": "http://localhost:3845/assets/992a63a468f4224c1c0285ed1b2e680c7f34dc1c.svg",
+    "isEarned": false
+  },
+  {
+    "id": 5,
+    "name": "배려왕",
+    "imageUrl": "http://localhost:3845/assets/718c8d4c41c8a31df16af6c6529354083d7e54be.svg",
+    "isEarned": false
+  },
+  {
+    "id": 6,
+    "name": "협력자",
+    "imageUrl": "http://localhost:3845/assets/d422a2e52e3b69f3e9005c3b9856633f96481854.svg",
+    "isEarned": false
+  },
+  {
+    "id": 7,
+    "name": "리더십",
+    "imageUrl": "http://localhost:3845/assets/f69f5e132db4218bb9bb50d83b50459629dc5ebb.svg",
+    "isEarned": false
+  },
+  {
+    "id": 8,
+    "name": "창의력",
+    "imageUrl": "http://localhost:3845/assets/a801a5bfe3adc2fdd73bb6b6667780e46e3086a1.svg",
+    "isEarned": false
+  },
+  {
+    "id": 9,
+    "name": "열정",
+    "imageUrl": "http://localhost:3845/assets/0958ae92b7baa919336b2c71fa3a2fac72200e57.svg",
+    "isEarned": false
+  },
+  {
+    "id": 10,
+    "name": "친절함",
+    "imageUrl": "http://localhost:3845/assets/460fd15a16bcb64ff8d9f7101148efb7e6360e97.svg",
+    "isEarned": false
+  },
+  {
+    "id": 11,
+    "name": "전문가",
+    "imageUrl": "http://localhost:3845/assets/12ee5e1bc067afed7184af3e93293fe4891b4ff7.svg",
+    "isEarned": false
+  },
+  {
+    "id": 12,
+    "name": "영향력",
+    "imageUrl": "http://localhost:3845/assets/6c57efb00efeae1780918f71a3507cee2df0b3f8.svg",
+    "isEarned": false
+  }
+]
+

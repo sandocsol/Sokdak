@@ -4,10 +4,7 @@ import ProfileHeader from "../features/profile/components/ProfileHeader.jsx";
 import ProfileTabs from "../features/profile/components/ProfileTabs.jsx";
 import PraiseMessage from "../features/profile/components/PraiseMessage.jsx";
 import BadgeList from "../features/profile/components/BadgeList.jsx";
-import {
-  mockReceivedMessages,
-  mockSentMessages,
-} from "../features/profile/mockData.js";
+import useProfileMessages from "../features/profile/hooks/useProfileMessages.js";
 
 const Container = styled.div`
   width: 100%;
@@ -46,6 +43,9 @@ const MessagesContainer = styled.div`
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("received");
+  
+  const { data: receivedMessages, loading: receivedLoading } = useProfileMessages("received");
+  const { data: sentMessages, loading: sentLoading } = useProfileMessages("sent");
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
@@ -55,9 +55,9 @@ export default function MyPage() {
   const getMessages = () => {
     switch (activeTab) {
       case "sent":
-        return mockSentMessages;
+        return sentMessages || [];
       case "received":
-        return mockReceivedMessages;
+        return receivedMessages || [];
       case "badges":
         return []; // 뱃지는 나중에 구현
       default:
@@ -66,6 +66,7 @@ export default function MyPage() {
   };
 
   const messages = getMessages();
+  const isLoading = (activeTab === "sent" && sentLoading) || (activeTab === "received" && receivedLoading);
 
   return (
     <Container>
@@ -78,11 +79,19 @@ export default function MyPage() {
       <ScrollableContent>
         {activeTab === "badges" ? (
           <BadgeList />
+        ) : isLoading ? (
+          <MessagesContainer>
+            <p style={{ color: "#ffffff", textAlign: "center", padding: "20px" }}>로딩 중...</p>
+          </MessagesContainer>
         ) : (
           <MessagesContainer>
-            {messages.map((message) => (
-              <PraiseMessage key={message.id} message={message} />
-            ))}
+            {messages.length > 0 ? (
+              messages.map((message) => (
+                <PraiseMessage key={message.id} message={message} />
+              ))
+            ) : (
+              <p style={{ color: "#ffffff", textAlign: "center", padding: "20px" }}>메시지가 없습니다.</p>
+            )}
           </MessagesContainer>
         )}
       </ScrollableContent>

@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "name": "이정안",
+  "university": "숭실대학교",
+  "profileImage": "/assets/profile-mock.jpg",
+  "clubs": [
+    {
+      "id": 1,
+      "name": "멋쟁이사자처럼"
+    },
+    {
+      "id": 2,
+      "name": "산들바람"
+    }
+  ]
+}
+

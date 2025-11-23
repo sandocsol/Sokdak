@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { mockUserProfile } from "../../features/profile/mockData.js";
+import useProfile from "../../features/profile/hooks/useProfile.js";
 
 const Overlay = styled.div`
   position: absolute;
@@ -177,6 +177,7 @@ export default function ClubAddModal({
 }) {
   const navigate = useNavigate();
   const [phoneFrame, setPhoneFrame] = useState(null);
+  const { data: profileData } = useProfile();
 
   // PhoneFrame 찾기
   useEffect(() => {
@@ -216,14 +217,14 @@ export default function ClubAddModal({
     navigate("/club/search");
   };
 
-  // 프로필 목 데이터에서 동아리 목록 가져오기
-  const userClubs = mockUserProfile.clubs.map((club) => ({
+  // 프로필 데이터에서 동아리 목록 가져오기
+  const userClubs = profileData?.clubs?.map((club) => ({
     id: club.id.toString(),
     name: club.name,
-    university: mockUserProfile.university,
-  }));
+    university: profileData.university,
+  })) || [];
 
-  // 기본 동아리 목록 (clubs prop이 있으면 사용, 없으면 프로필 목 데이터 사용)
+  // 기본 동아리 목록 (clubs prop이 있으면 사용, 없으면 프로필 데이터 사용)
   const defaultClubs = clubs.length > 0 ? clubs : userClubs;
 
   const modalContent = (

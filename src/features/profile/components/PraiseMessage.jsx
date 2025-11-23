@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { formatTimeAgo } from "../mockData.js";
+import { formatTimeAgo } from "../utils/formatTimeAgo.js";
 
 const MessageCard = styled.div`
   background: #353535;

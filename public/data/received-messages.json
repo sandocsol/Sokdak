@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "senderName": "익명",
+    "senderId": null,
+    "content": "예쁘고 사랑스럽고 일도 잘하고 성격도 좋고 배고파요 집에 가고싶어요",
+    "gender": "male",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": true
+  },
+  {
+    "id": 2,
+    "senderName": "익명",
+    "senderId": null,
+    "content": "저는 이정안 학우의 다정함을 칭찬할까요 말까요",
+    "gender": "female",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": true
+  },
+  {
+    "id": 3,
+    "senderName": "익명",
+    "senderId": null,
+    "content": "저는 이정안 학우의 다정함을 칭찬할까요 말까요",
+    "gender": "female",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": true
+  },
+  {
+    "id": 4,
+    "senderName": "익명",
+    "senderId": null,
+    "content": "항상 밝은 에너지로 주변을 환하게 만들어주시는 모습이 정말 멋져요!",
+    "gender": "male",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": true
+  },
+  {
+    "id": 5,
+    "senderName": "익명",
+    "senderId": null,
+    "content": "팀 프로젝트에서 리더십이 정말 뛰어나셨어요",
+    "gender": "male",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": true
+  },
+  {
+    "id": 6,
+    "senderName": "익명",
+    "senderId": null,
+    "content": "항상 긍정적인 마인드가 인상깊어요",
+    "gender": "female",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": true
+  }
+]
+

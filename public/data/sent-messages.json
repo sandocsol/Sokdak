@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "receiverName": "이정안",
+    "receiverId": 2,
+    "content": "저는 이정안 학우의 다정함을 칭찬합니다 (이런 느낌 맞나요)",
+    "gender": "female",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": false
+  },
+  {
+    "id": 2,
+    "receiverName": "조수한",
+    "receiverId": 3,
+    "content": "저는 이정안 학우의 다정함을 칭찬할까요 말까요",
+    "gender": "male",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": false
+  },
+  {
+    "id": 3,
+    "receiverName": "김민수",
+    "receiverId": 4,
+    "content": "항상 열심히 노력하는 모습이 정말 멋져요!",
+    "gender": "male",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": false
+  },
+  {
+    "id": 4,
+    "receiverName": "박지영",
+    "receiverId": 5,
+    "content": "프로젝트 발표 준비하시느라 고생 많으셨어요",
+    "gender": "female",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": false
+  },
+  {
+    "id": 5,
+    "receiverName": "최동현",
+    "receiverId": 6,
+    "content": "팀워크가 좋아서 정말 즐겁게 협업했어요",
+    "gender": "male",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": false
+  },
+  {
+    "id": 6,
+    "receiverName": "이서연",
+    "receiverId": 7,
+    "content": "항상 밝은 미소로 분위기를 좋게 만들어주셔서 감사해요",
+    "gender": "female",
+    "timestamp": "2024-01-01T12:00:00.000Z",
+    "isAnonymous": false
+  }
+]
+

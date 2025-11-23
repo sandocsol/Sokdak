@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
 /**
- * 사용자 프로필 정보를 가져오는 커스텀 훅
+ * 칭찬 카테고리 목록을 가져오는 커스텀 훅
  * @returns {object} { data, loading, error }
  */
-export default function useProfile() {
+export default function usePraiseCategories() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const dataUrl = useMemo(() => {
-    return '/data/user-profile.json';
+    return '/data/praise-categories.json';
   }, []);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function useProfile() {
         const res = await fetch(dataUrl, { headers: { 'Accept': 'application/json' } });
 
         if (!res.ok) {
-          throw new Error(`Failed to load user profile: ${res.status}`);
+          throw new Error(`Failed to load praise categories: ${res.status}`);
         }
 
         const json = await res.json();

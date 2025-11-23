@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
 /**
- * 사용자 프로필 정보를 가져오는 커스텀 훅
+ * 동아리 목록을 가져오는 커스텀 훅
  * @returns {object} { data, loading, error }
  */
-export default function useProfile() {
+export default function useClubs() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const dataUrl = useMemo(() => {
-    return '/data/user-profile.json';
+    return '/data/clubs.json';
   }, []);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function useProfile() {
         const res = await fetch(dataUrl, { headers: { 'Accept': 'application/json' } });
 
         if (!res.ok) {
-          throw new Error(`Failed to load user profile: ${res.status}`);
+          throw new Error(`Failed to load clubs: ${res.status}`);
         }
 
         const json = await res.json();

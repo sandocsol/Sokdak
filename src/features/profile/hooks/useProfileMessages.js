@@ -1,17 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
 
 /**
- * 사용자 프로필 정보를 가져오는 커스텀 훅
+ * 프로필 메시지(받은/보낸)를 가져오는 커스텀 훅
+ * @param {string} type - 'received' 또는 'sent'
  * @returns {object} { data, loading, error }
  */
-export default function useProfile() {
+export default function useProfileMessages(type = 'received') {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const dataUrl = useMemo(() => {
-    return '/data/user-profile.json';
-  }, []);
+    if (type === 'sent') {
+      return '/data/sent-messages.json';
+    }
+    return '/data/received-messages.json';
+  }, [type]);
 
   useEffect(() => {
     let cancelled = false;
@@ -26,7 +30,7 @@ export default function useProfile() {
         const res = await fetch(dataUrl, { headers: { 'Accept': 'application/json' } });
 
         if (!res.ok) {
-          throw new Error(`Failed to load user profile: ${res.status}`);
+          throw new Error(`Failed to load ${type} messages: ${res.status}`);
         }
 
         const json = await res.json();
@@ -44,7 +48,7 @@ export default function useProfile() {
     return () => {
       cancelled = true;
     };
-  }, [dataUrl]);
+  }, [dataUrl, type]);
 
   return { data, loading, error };
 }
