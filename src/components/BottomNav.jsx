@@ -1,5 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import useClubs from "../features/club/hooks/useClubs.js";
 
 const NavContainer = styled.nav`
   position: relative;
@@ -143,12 +145,28 @@ const MyPageIcon = () => {
 export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: clubs } = useClubs();
+  const [defaultClubId, setDefaultClubId] = useState(null);
+
+  // 기본 동아리 ID 설정
+  useEffect(() => {
+    if (clubs && clubs.length > 0 && !defaultClubId) {
+      setDefaultClubId(clubs[0].id);
+    }
+  }, [clubs, defaultClubId]);
+
+  const handleClubClick = () => {
+    if (defaultClubId) {
+      navigate(`/club/${defaultClubId}`);
+    }
+    // defaultClubId가 없으면 아무것도 하지 않음 (로딩 중)
+  };
 
   const navItems = [
-    { path: "/", label: "홈", icon: HomeIcon },
-    { path: "/ranking", label: "랭킹", icon: RankingIcon },
-    { path: "/club", label: "동아리", icon: ClubIcon },
-    { path: "/mypage", label: "마이페이지", icon: MyPageIcon },
+    { path: "/", label: "홈", icon: HomeIcon, onClick: () => navigate("/") },
+    { path: "/ranking", label: "랭킹", icon: RankingIcon, onClick: () => navigate("/ranking") },
+    { path: "/club", label: "동아리", icon: ClubIcon, onClick: handleClubClick },
+    { path: "/mypage", label: "마이페이지", icon: MyPageIcon, onClick: () => navigate("/mypage") },
   ];
 
   const isActive = (path) => {
@@ -164,7 +182,7 @@ export default function BottomNav() {
         const active = isActive(item.path);
         const IconComponent = item.icon;
         return (
-          <NavItem key={item.path} onClick={() => navigate(item.path)}>
+          <NavItem key={item.path} onClick={item.onClick}>
             <NavIcon $active={active}>
               <IconComponent />
             </NavIcon>

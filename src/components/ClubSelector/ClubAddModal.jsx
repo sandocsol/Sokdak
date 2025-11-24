@@ -164,13 +164,15 @@ const PlusIconSvg = () => (
 /**
  * ClubAddModal 컴포넌트
  * 동아리 선택 및 추가를 위한 모달 컴포넌트
- * @param {Array} clubs - 동아리 목록 [{ id, name, university }, ...]
+ * 사용자가 가입한 동아리만 표시 (user-profile.json의 clubs)
+ * @param {Array} clubs - (사용하지 않음) 동아리 목록은 user-profile.json에서 가져옴
  * @param {string|null} selectedClubId - 현재 선택된 동아리 ID
  * @param {Function} onSelectClub - 동아리 선택 시 호출되는 콜백 함수 (clubId) => void
  * @param {Function} onClose - 모달 닫기 콜백 함수
  */
 export default function ClubAddModal({
-  clubs = [],
+  // eslint-disable-next-line no-unused-vars
+  clubs = [], // 이 prop은 사용하지 않음 (하위 호환성을 위해 유지)
   selectedClubId = null,
   onSelectClub,
   onClose,
@@ -217,22 +219,23 @@ export default function ClubAddModal({
     navigate("/club/search");
   };
 
-  // 프로필 데이터에서 동아리 목록 가져오기
+  // 프로필 데이터에서 사용자가 가입한 동아리 목록만 가져오기
+  // clubs.json의 모든 동아리는 검색용이므로 여기서는 사용하지 않음
   const userClubs = profileData?.clubs?.map((club) => ({
     id: club.id.toString(),
     name: club.name,
     university: profileData.university,
   })) || [];
 
-  // 기본 동아리 목록 (clubs prop이 있으면 사용, 없으면 프로필 데이터 사용)
-  const defaultClubs = clubs.length > 0 ? clubs : userClubs;
+  // 항상 사용자가 가입한 동아리만 표시
+  const displayClubs = userClubs;
 
   const modalContent = (
     <Overlay onClick={handleOverlayClick}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ModalButtonContainer>
           <ClubList>
-            {defaultClubs.map((club) => {
+            {displayClubs.map((club) => {
               const isSelected = selectedClubId === club.id;
               return (
                 <ClubItem

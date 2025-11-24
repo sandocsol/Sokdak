@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ClubSelector from "../components/ClubSelector/ClubSelector.jsx";
+import { useAuth } from "../features/auth/useAuth.js";
 
 const Container = styled.div`
   width: 100%;
@@ -56,13 +57,24 @@ const PraiseButton = styled.button`
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [selectedClubId, setSelectedClubId] = useState("1");
+  const { user: profileData, loading: authLoading } = useAuth();
+  const [selectedClubId, setSelectedClubId] = useState(null);
 
-  // 동아리 목록 (실제로는 API에서 가져올 데이터)
-  const clubs = [
-    { id: "1", name: "멋쟁이사자처럼", university: "숭실대학교" },
-    { id: "2", name: "산들바람", university: "" },
-  ];
+  // user-profile.json에서 사용자가 가입한 동아리 목록 가져오기
+  const clubs = useMemo(() => {
+    return profileData?.clubs?.map((club) => ({
+      id: club.id.toString(),
+      name: club.name,
+      university: profileData.university || "",
+    })) || [];
+  }, [profileData]);
+
+  // 초기 선택된 동아리 설정 (첫 번째 동아리)
+  useEffect(() => {
+    if (!selectedClubId && clubs.length > 0) {
+      setSelectedClubId(clubs[0].id);
+    }
+  }, [clubs, selectedClubId]);
 
   // 선택된 동아리 정보
   const selectedClub = clubs.find((club) => club.id === selectedClubId) || clubs[0];
@@ -75,11 +87,32 @@ export default function HomePage() {
     setSelectedClubId(clubId);
   };
 
+  // 로딩 중이거나 동아리가 없을 때
+  if (authLoading) {
+    return (
+      <Container>
+        <Header>
+          <p style={{ color: "#cfcfcf" }}>로딩 중...</p>
+        </Header>
+      </Container>
+    );
+  }
+
+  if (!selectedClub || clubs.length === 0) {
+    return (
+      <Container>
+        <Header>
+          <p style={{ color: "#cfcfcf" }}>가입한 동아리가 없습니다.</p>
+        </Header>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <Header>
         <ClubSelector
-          university={selectedClub.university || "숭실대학교"}
+          university={selectedClub.university || profileData?.university || ""}
           clubName={selectedClub.name}
           clubs={clubs}
           selectedClubId={selectedClubId}

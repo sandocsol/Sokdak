@@ -11,7 +11,8 @@ import MyPage from "./pages/MyPage.jsx";
 import PraisePage from "./pages/PraisePage.jsx";
 import ProfileEditPage from "./pages/ProfileEditPage.jsx";
 import ProfileFieldEditPage from "./pages/ProfileFieldEditPage.jsx";
-import ClubSearch from "./features/club/components/ClubSearch.jsx";
+import ClubSearchPage from "./pages/ClubSearchPage.jsx";
+import ClubJoinPage from "./pages/ClubJoinPage.jsx";
 import { AuthProvider } from "./features/auth/AuthProvider.jsx";
 
 const router = createBrowserRouter([
@@ -28,12 +29,16 @@ const router = createBrowserRouter([
         element: <RankingPage />,
       },
       {
-        path: "club",
+        path: "club/:clubId",
         element: <ClubPage />,
       },
       {
         path: "club/search",
-        element: <ClubSearch />,
+        element: <ClubSearchPage />,
+      },
+      {
+        path: "club/join/:clubId",
+        element: <ClubJoinPage />,
       },
       {
         path: "mypage",

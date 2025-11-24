@@ -1,0 +1,150 @@
+[
+  {
+    "clubId": 1,
+    "memberCount": 35,
+    "rankings": [
+      {
+        "id": 1,
+        "name": "이정안",
+        "rank": 1,
+        "praiseCount": 120,
+        "profileImage": null
+      },
+      {
+        "id": 2,
+        "name": "김철수",
+        "rank": 2,
+        "praiseCount": 98,
+        "profileImage": null
+      },
+      {
+        "id": 3,
+        "name": "박영희",
+        "rank": 3,
+        "praiseCount": 87,
+        "profileImage": null
+      }
+    ],
+    "members": [
+      {
+        "id": 1,
+        "name": "이정안",
+        "profileImage": null
+      },
+      {
+        "id": 2,
+        "name": "김철수",
+        "profileImage": null
+      },
+      {
+        "id": 3,
+        "name": "박영희",
+        "profileImage": null
+      },
+      {
+        "id": 4,
+        "name": "최민수",
+        "profileImage": null
+      },
+      {
+        "id": 5,
+        "name": "정수진",
+        "profileImage": null
+      }
+    ]
+  },
+  {
+    "clubId": 2,
+    "memberCount": 28,
+    "rankings": [
+      {
+        "id": 1,
+        "name": "홍길동",
+        "rank": 1,
+        "praiseCount": 95,
+        "profileImage": null
+      },
+      {
+        "id": 2,
+        "name": "김영수",
+        "rank": 2,
+        "praiseCount": 82,
+        "profileImage": null
+      },
+      {
+        "id": 3,
+        "name": "이미영",
+        "rank": 3,
+        "praiseCount": 75,
+        "profileImage": null
+      }
+    ],
+    "members": [
+      {
+        "id": 1,
+        "name": "홍길동",
+        "profileImage": null
+      },
+      {
+        "id": 2,
+        "name": "김영수",
+        "profileImage": null
+      },
+      {
+        "id": 3,
+        "name": "이미영",
+        "profileImage": null
+      }
+    ]
+  },
+  {
+    "clubId": 4,
+    "memberCount": 42,
+    "rankings": [
+      {
+        "id": 1,
+        "name": "강민지",
+        "rank": 1,
+        "praiseCount": 150,
+        "profileImage": null
+      },
+      {
+        "id": 2,
+        "name": "윤서연",
+        "rank": 2,
+        "praiseCount": 135,
+        "profileImage": null
+      },
+      {
+        "id": 3,
+        "name": "조현우",
+        "rank": 3,
+        "praiseCount": 110,
+        "profileImage": null
+      }
+    ],
+    "members": [
+      {
+        "id": 1,
+        "name": "강민지",
+        "profileImage": null
+      },
+      {
+        "id": 2,
+        "name": "윤서연",
+        "profileImage": null
+      },
+      {
+        "id": 3,
+        "name": "조현우",
+        "profileImage": null
+      },
+      {
+        "id": 4,
+        "name": "임도현",
+        "profileImage": null
+      }
+    ]
+  }
+]
+
