@@ -34,17 +34,30 @@ const NavItem = styled.button`
   height: 48px;
   flex: 1;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   
   &:focus {
     outline: none;
+    box-shadow: none;
   }
   
   &:focus-visible {
     outline: none;
+    box-shadow: none;
   }
   
   &:active {
     outline: none;
+    box-shadow: none;
+    background: none;
+  }
+  
+  &:hover {
+    background: none;
   }
 `;
 

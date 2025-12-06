@@ -1,14 +1,23 @@
-import { useState, useEffect } from "react";
 import styled from "styled-components";
+import useRankings from "../features/ranking/hooks/useRankings.js";
+
 
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  padding-top: 61px; /* StatusBar 높이 */
-  padding-bottom: 80px; /* BottomNav 높이만큼 여백 */
-  overflow-y: auto;
   background: #222222;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 `;
 
 const Section = styled.section`
@@ -24,7 +33,7 @@ const SectionTitle = styled.h2`
   color: #cfcfcf;
   margin: 0;
   margin-bottom: 20px;
-  padding-top: 52px; /* 첫 번째 섹션은 52px, 두 번째는 20px */
+  padding-top: 90px; /* 첫 번째 섹션은 90px, 두 번째는 20px */
 `;
 
 const ComplimentKingsContainer = styled.div`
@@ -132,8 +141,10 @@ const ClubRankNumber = styled.span`
 
 const ClubInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
   flex: 1;
 `;
 
@@ -151,28 +162,16 @@ const UniversityName = styled.span`
   font-size: 15px;
   color: #8c8c8c;
   line-height: 1.2;
-  margin-top: 2px;
 `;
 
 export default function RankingPage() {
-  const [complimentKings, setComplimentKings] = useState([]);
-  const [clubRankings, setClubRankings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data, loading, error } = useRankings();
+  const complimentKings = data?.complimentKings || [];
+  const clubRankings = data?.clubRankings || [];
 
-  useEffect(() => {
-    // 랭킹 데이터 로드 (전체 칭찬왕 + 동아리 랭킹)
-    fetch("/data/rankings.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setComplimentKings(data.complimentKings || []);
-        setClubRankings(data.clubRankings || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load rankings:", err);
-        setLoading(false);
-      });
-  }, []);
+  if (error) {
+    console.error("Failed to load rankings:", error);
+  }
 
   // 순서 조정: 1등은 중앙, 2등은 왼쪽, 3등은 오른쪽
   const orderedKings = [];
@@ -201,7 +200,7 @@ export default function RankingPage() {
   return (
     <Container>
       <Section>
-        <SectionTitle style={{ paddingTop: "52px" }}>전체 칭찬왕</SectionTitle>
+        <SectionTitle >전체 칭찬왕</SectionTitle>
         <ComplimentKingsContainer>
           {orderedKings.map((king) => (
             <KingCard key={king.rank} $rank={king.rank}>

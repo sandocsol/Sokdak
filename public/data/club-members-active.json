@@ -1,0 +1,150 @@
+[
+  {
+    "clubId": 1,
+    "active": true,
+    "count": 35,
+    "members": [
+      {
+        "userId": 1,
+        "name": "이정안"
+      },
+      {
+        "userId": 2,
+        "name": "김철수"
+      },
+      {
+        "userId": 3,
+        "name": "박영희"
+      },
+      {
+        "userId": 4,
+        "name": "최민수"
+      },
+      {
+        "userId": 5,
+        "name": "정수진"
+      }
+    ]
+  },
+  {
+    "clubId": 2,
+    "active": true,
+    "count": 28,
+    "members": [
+      {
+        "userId": 1,
+        "name": "홍길동"
+      },
+      {
+        "userId": 2,
+        "name": "김영수"
+      },
+      {
+        "userId": 3,
+        "name": "이미영"
+      }
+    ]
+  },
+  {
+    "clubId": 3,
+    "active": true,
+    "count": 22,
+    "members": [
+      {
+        "userId": 1,
+        "name": "김도현"
+      },
+      {
+        "userId": 2,
+        "name": "이서윤"
+      }
+    ]
+  },
+  {
+    "clubId": 4,
+    "active": true,
+    "count": 42,
+    "members": [
+      {
+        "userId": 1,
+        "name": "강민지"
+      },
+      {
+        "userId": 2,
+        "name": "윤서연"
+      },
+      {
+        "userId": 3,
+        "name": "조현우"
+      },
+      {
+        "userId": 4,
+        "name": "임도현"
+      }
+    ]
+  },
+  {
+    "clubId": 5,
+    "active": true,
+    "count": 18,
+    "members": [
+      {
+        "userId": 1,
+        "name": "문지은"
+      },
+      {
+        "userId": 2,
+        "name": "송민준"
+      }
+    ]
+  },
+  {
+    "clubId": 6,
+    "active": true,
+    "count": 25,
+    "members": [
+      {
+        "userId": 1,
+        "name": "장하늘"
+      },
+      {
+        "userId": 2,
+        "name": "배유진"
+      },
+      {
+        "userId": 3,
+        "name": "한지훈"
+      }
+    ]
+  },
+  {
+    "clubId": 7,
+    "active": true,
+    "count": 30,
+    "members": [
+      {
+        "userId": 1,
+        "name": "오민서"
+      },
+      {
+        "userId": 2,
+        "name": "류승혁"
+      }
+    ]
+  },
+  {
+    "clubId": 8,
+    "active": true,
+    "count": 20,
+    "members": [
+      {
+        "userId": 1,
+        "name": "신혜원"
+      },
+      {
+        "userId": 2,
+        "name": "전우진"
+      }
+    ]
+  }
+]

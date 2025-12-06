@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ProgressBar from "../components/ProgressBar.jsx";
 import usePraiseCategories from "../features/praise/hooks/usePraiseCategories.js";
+import useGiveCompliment from "../features/praise/hooks/useGiveCompliment.js";
+import useUserProfile from "../features/profile/hooks/useUserProfile.js";
+import { useSelectedClub } from "../features/club/useSelectedClub.js";
 import MemberSelector from "../features/praise/components/MemberSelector.jsx";
 
 const Container = styled.div`
@@ -32,9 +35,25 @@ const BackButton = styled.button`
   justify-content: center;
   padding: 0;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   
   &:focus {
     outline: none;
+    box-shadow: none;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:active {
+    outline: none;
+    box-shadow: none;
   }
   
   svg {
@@ -163,9 +182,25 @@ const OptionButton = styled.button`
   cursor: pointer;
   padding: 0;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   
   &:focus {
     outline: none;
+    box-shadow: none;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:active {
+    outline: none;
+    box-shadow: none;
   }
   
   font-family: "Pretendard", sans-serif;
@@ -204,9 +239,26 @@ const SendButton = styled.button`
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   flex-shrink: 0;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   
   &:focus {
     outline: none;
+    box-shadow: none;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:active {
+    opacity: ${(props) => (props.disabled ? 1 : 0.8)};
+    outline: none;
+    box-shadow: none;
   }
   
   font-family: "Pretendard", sans-serif;
@@ -217,10 +269,6 @@ const SendButton = styled.button`
   
   &:hover {
     opacity: ${(props) => (props.disabled ? 1 : 0.9)};
-  }
-  
-  &:active {
-    opacity: ${(props) => (props.disabled ? 1 : 0.8)};
   }
 `;
 
@@ -254,13 +302,27 @@ const SkipIcon = () => (
 
 export default function PraisePage() {
   const navigate = useNavigate();
-  const { data: praiseCategories, loading, error } = usePraiseCategories();
+  
+  // 선택된 동아리 정보 가져오기
+  const { selectedClub, loading: clubLoading } = useSelectedClub();
+  const clubId = selectedClub?.id;
+  
+  // 현재 사용자 정보 가져오기
+  const { data: userProfile, loading: userLoading, error: userError } = useUserProfile();
+  const currentUserId = userProfile?.id || userProfile?.userId;
+
+  const { data: praiseCategories, loading, error } = usePraiseCategories(clubId, currentUserId);
   const [isAnonymous, setIsAnonymous] = useState(true); // 기본값: 익명 선택
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0); // 현재 칭찬 카테고리 인덱스
 
   // 현재 칭찬 카테고리 가져오기
   const currentCategory = praiseCategories?.[currentCategoryIndex];
-  const users = currentCategory?.users || []; // 서버에서 받아온 4명의 사용자
+  // candidates 배열을 MemberSelector가 기대하는 형태로 변환
+  const candidates = currentCategory?.candidates || currentCategory?.users || [];
+  const users = candidates.map(candidate => ({
+    id: candidate.userId || candidate.id,
+    name: candidate.userName || candidate.name
+  }));
 
   // 초기 선택: 아무것도 선택되지 않은 상태
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -270,6 +332,8 @@ export default function PraisePage() {
     setSelectedUserId(null);
     setIsAnonymous(true); // 각 칭찬마다 익명을 기본값으로 리셋
   }, [currentCategoryIndex]);
+
+  const { send: sendCompliment, loading: sending } = useGiveCompliment();
 
   const handleBack = () => {
     // BackButton 클릭 시 홈 화면으로 이동
@@ -291,26 +355,50 @@ export default function PraisePage() {
     handleNext();
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     // 선택된 사용자가 없으면 실행하지 않음
-    if (selectedUserId === null) {
+    if (selectedUserId === null || !currentCategory?.complimentId) {
       return;
     }
     
-    // 보내기: 선택한 사용자와 익명 여부를 저장하고 다음 칭찬으로 이동
-    console.log("Selected user:", selectedUserId, "Anonymous:", isAnonymous);
-    console.log("Category:", currentCategory.text);
-    // TODO: 실제 전송 로직 구현 (API 호출 등)
-    
-    // 다음 칭찬으로 이동
-    handleNext();
+    try {
+      // 칭찬 전송 API 호출 (isAnonymous 포함)
+      await sendCompliment(currentCategory.complimentId, selectedUserId, isAnonymous);
+      console.log("Compliment sent:", {
+        complimentId: currentCategory.complimentId,
+        userId: selectedUserId,
+        isAnonymous: isAnonymous
+      });
+      
+      // 다음 칭찬으로 이동
+      handleNext();
+    } catch (err) {
+      console.error('Failed to send compliment:', err);
+      // 에러 처리 (사용자에게 알림 등)
+    }
   };
 
   // 로딩 중이거나 에러가 있거나 데이터가 없을 때 처리
-  if (loading) {
+  if (userLoading || clubLoading || loading) {
     return (
       <Container>
         <Title>로딩 중...</Title>
+      </Container>
+    );
+  }
+
+  if (userError) {
+    return (
+      <Container>
+        <Title>사용자 정보를 불러오는 중 오류가 발생했습니다.</Title>
+      </Container>
+    );
+  }
+
+  if (!clubId || !currentUserId) {
+    return (
+      <Container>
+        <Title>동아리 ID 또는 사용자 정보가 필요합니다.</Title>
       </Container>
     );
   }
@@ -376,8 +464,8 @@ export default function PraisePage() {
           onSelect={setSelectedUserId}
         />
 
-        <SendButton onClick={handleSend} disabled={selectedUserId === null}>
-          보내기
+        <SendButton onClick={handleSend} disabled={selectedUserId === null || sending}>
+          {sending ? '전송 중...' : '보내기'}
         </SendButton>
       </ContentWrapper>
     </Container>

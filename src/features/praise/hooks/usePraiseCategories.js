@@ -1,37 +1,31 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getPraiseCategories } from '../api/praiseApi.js';
 
 /**
  * 칭찬 카테고리 목록을 가져오는 커스텀 훅
+ * @param {string|number} clubId - 동아리 ID
+ * @param {string|number} userId - 사용자 ID (보낸 사람 ID)
  * @returns {object} { data, loading, error }
  */
-export default function usePraiseCategories() {
+export default function usePraiseCategories(clubId, userId) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const dataUrl = useMemo(() => {
-    return '/data/praise-categories.json';
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      if (!dataUrl) return;
+      if (!clubId || !userId) {
+        return;
+      }
 
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(dataUrl, { headers: { 'Accept': 'application/json' } });
-
-        if (!res.ok) {
-          throw new Error(`Failed to load praise categories: ${res.status}`);
-        }
-
-        const json = await res.json();
-
-        if (!cancelled) setData(json);
+        const result = await getPraiseCategories(clubId, userId);
+        if (!cancelled) setData(result);
       } catch (err) {
         if (!cancelled) setError(err);
       } finally {
@@ -44,7 +38,7 @@ export default function usePraiseCategories() {
     return () => {
       cancelled = true;
     };
-  }, [dataUrl]);
+  }, [clubId, userId]);
 
   return { data, loading, error };
 }

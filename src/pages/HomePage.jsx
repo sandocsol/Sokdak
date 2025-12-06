@@ -8,8 +8,17 @@ const Container = styled.div`
   height: 100%;
   padding-bottom: 80px; /* BottomNav 높이만큼 여백 */
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   background: #222222;
+  
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 `;
 
 const Header = styled.div`
@@ -21,9 +30,9 @@ const Header = styled.div`
 `;
 
 const PraiseButton = styled.button`
-  position: absolute;
+  position: fixed;
   left: 50%;
-  top: 583px;
+  bottom: 120px; /* BottomNav 위에 배치 */
   transform: translateX(-50%);
   width: 330px;
   height: 50px;
@@ -36,6 +45,7 @@ const PraiseButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 10;
   
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 600; /* SemiBold */
@@ -44,6 +54,11 @@ const PraiseButton = styled.button`
   color: #222222;
   text-align: center;
   white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   
   &:hover {
     opacity: 0.9;
@@ -51,6 +66,18 @@ const PraiseButton = styled.button`
   
   &:active {
     opacity: 0.8;
+    outline: none;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   }
 `;
 

@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getClubMembers } from '../api/clubApi.js';
 
 /**
  * 동아리 멤버 정보를 가져오는 커스텀 훅
@@ -11,10 +12,6 @@ export default function useClubMembers(clubId) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const dataUrl = useMemo(() => {
-    return '/data/club-members.json';
-  }, []);
-
   useEffect(() => {
     if (!clubId) {
       setData(null);
@@ -24,45 +21,16 @@ export default function useClubMembers(clubId) {
     let cancelled = false;
 
     async function load() {
-      if (!dataUrl) return;
-
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(dataUrl, { headers: { 'Accept': 'application/json' } });
-
-        if (!res.ok) {
-          throw new Error(`Failed to load club members: ${res.status}`);
-        }
-
-        const json = await res.json();
-        
-        // clubId로 특정 동아리의 멤버 정보 찾기
-        const clubData = json.find((item) => 
-          item.clubId.toString() === clubId.toString() || item.clubId === clubId
-        );
-
-        if (!cancelled) {
-          if (clubData) {
-            setData(clubData);
-          } else {
-            // 데이터가 없으면 빈 데이터 반환
-            setData({
-              memberCount: 0,
-              rankings: [],
-              members: []
-            });
-          }
-        }
+        const result = await getClubMembers(clubId);
+        if (!cancelled) setData(result);
       } catch (err) {
-        if (!cancelled) {
-          setError(err);
-        }
+        if (!cancelled) setError(err);
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -71,7 +39,7 @@ export default function useClubMembers(clubId) {
     return () => {
       cancelled = true;
     };
-  }, [clubId, dataUrl]);
+  }, [clubId]);
 
   return { data, loading, error };
 }

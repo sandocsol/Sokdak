@@ -27,6 +27,30 @@ const GlobalStyle = createGlobalStyle`
     height: 100%;
     overflow: hidden;
   }
+
+  /* 모든 버튼에서 파란색 박스 제거 */
+  button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    
+    &:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+    
+    &:active {
+      outline: none;
+      box-shadow: none;
+    }
+  }
 `;
 
 function App() {

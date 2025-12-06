@@ -16,6 +16,11 @@ const ActionButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 600;
@@ -33,6 +38,18 @@ const ActionButton = styled.button`
   
   &:active {
     opacity: ${(props) => (props.disabled ? 1 : 0.8)};
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
   }
 `;
 
@@ -60,8 +77,7 @@ export default function ClubJoinActions({ club, isMember = false }) {
 
   const handleGoToPraise = () => {
     if (isMember) {
-      // TODO: 해당 동아리의 칭찬 페이지로 이동
-      navigate("/praise", { state: { clubId: club?.id } });
+      navigate("/praise");
     }
   };
 

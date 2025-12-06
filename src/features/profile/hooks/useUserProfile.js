@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { getBadges } from '../api/badgesApi.js';
+import { getUserProfile } from '../api/userApi.js';
 
 /**
- * 뱃지 목록을 가져오는 커스텀 훅
+ * 사용자 프로필을 가져오는 커스텀 훅
  * @returns {object} { data, loading, error }
  */
-export default function useBadges() {
+export default function useUserProfile() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function useBadges() {
       setError(null);
 
       try {
-        const result = await getBadges();
+        const result = await getUserProfile();
         if (!cancelled) setData(result);
       } catch (err) {
         if (!cancelled) setError(err);

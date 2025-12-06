@@ -1,20 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { AuthContext } from './AuthContext.js';
-
-/**
- * 사용자 프로필 정보를 가져오는 함수
- */
-async function fetchUserProfile() {
-  const res = await fetch('/data/user-profile.json', {
-    headers: { 'Accept': 'application/json' }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to load user profile: ${res.status}`);
-  }
-
-  return res.json();
-}
+import { getUserProfile } from '../profile/api/userApi.js';
 
 /**
  * 인증 상태와 사용자 정보를 제공하는 Provider 컴포넌트
@@ -33,7 +19,7 @@ export function AuthProvider({ children }) {
       setError(null);
 
       try {
-        const userData = await fetchUserProfile();
+        const userData = await getUserProfile();
         if (!cancelled) {
           // 성별이 없으면 기본값 설정 (여성)
           if (!userData.gender) {

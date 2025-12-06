@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import useUniversities from '../hooks/useUniversities.js';
 
 const SearchSection = styled.div`
   display: flex;
@@ -127,18 +128,14 @@ const Underline = styled.div`
 export default function UniversityFieldEditor({ value, onChange }) {
   const [searchQuery, setSearchQuery] = useState(value || '');
   const [searchResults, setSearchResults] = useState([]);
-  const [universities, setUniversities] = useState([]);
+  const { data: universities = [], error } = useUniversities();
 
-  // 학교 데이터 로드
+  // 에러 처리
   useEffect(() => {
-    fetch('/data/universities.json')
-      .then(res => res.json())
-      .then(data => setUniversities(data))
-      .catch(err => {
-        console.error('학교 데이터 로드 실패:', err);
-        setUniversities([]);
-      });
-  }, []);
+    if (error) {
+      console.error('학교 데이터 로드 실패:', error);
+    }
+  }, [error]);
 
   // 초기 검색어 설정 (마운트 시에만)
   const [isInitialized, setIsInitialized] = useState(false);

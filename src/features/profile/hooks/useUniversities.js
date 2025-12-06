@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getBadges } from '../api/badgesApi.js';
+import { getUniversities } from '../api/universityApi.js';
 
 /**
- * 뱃지 목록을 가져오는 커스텀 훅
+ * 대학교 목록을 가져오는 커스텀 훅
  * @returns {object} { data, loading, error }
  */
-export default function useBadges() {
-  const [data, setData] = useState(null);
+export default function useUniversities() {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -18,10 +18,13 @@ export default function useBadges() {
       setError(null);
 
       try {
-        const result = await getBadges();
+        const result = await getUniversities();
         if (!cancelled) setData(result);
       } catch (err) {
-        if (!cancelled) setError(err);
+        if (!cancelled) {
+          setError(err);
+          setData([]);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }

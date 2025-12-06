@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import useClubs from "../hooks/useClubs.js";
+import useSearchClubs from "../hooks/useSearchClubs.js";
 
 const Container = styled.div`
   width: 100%;
@@ -224,24 +224,15 @@ export default function ClubSearch() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedClub, setSelectedClub] = useState(null);
-  const { data: clubs, loading, error } = useClubs();
+  const { data: clubs, loading, error } = useSearchClubs(searchQuery, true);
 
-  // 검색 결과 필터링 (최대 4개)
+  // 검색 결과는 최대 4개만 표시
   const searchResults = useMemo(() => {
-    if (!searchQuery.trim() || !clubs) {
+    if (!clubs || clubs.length === 0) {
       return [];
     }
-    
-    const query = searchQuery.toLowerCase();
-    const filtered = clubs.filter(
-      (club) =>
-        club.name.toLowerCase().includes(query) ||
-        club.university.toLowerCase().includes(query) ||
-        `${club.name} ${club.university}`.toLowerCase().includes(query)
-    );
-    // 최대 4개만 반환
-    return filtered.slice(0, 4);
-  }, [searchQuery, clubs]);
+    return clubs.slice(0, 4);
+  }, [clubs]);
 
   const handleBack = () => {
     navigate(-1);

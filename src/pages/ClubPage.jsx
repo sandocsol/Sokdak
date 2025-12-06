@@ -15,11 +15,19 @@ const Container = styled.div`
   position: relative;
   background: #222222;
   box-sizing: border-box;
+  
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 `;
 
 const Header = styled.div`
   position: relative;
-  padding-top: 61px; /* StatusBar 높이 */
+  padding-top: 90px; /* StatusBar 높이 */
   padding-left: 42px;
   padding-right: 42px;
   padding-bottom: 20px;

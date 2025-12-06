@@ -1,0 +1,63 @@
+[
+  {
+    "clubId": 1,
+    "active": false,
+    "count": 3,
+    "members": [
+      {
+        "userId": 10,
+        "name": "대기자1"
+      },
+      {
+        "userId": 11,
+        "name": "대기자2"
+      },
+      {
+        "userId": 12,
+        "name": "대기자3"
+      }
+    ]
+  },
+  {
+    "clubId": 2,
+    "active": false,
+    "count": 2,
+    "members": [
+      {
+        "userId": 20,
+        "name": "대기자A"
+      },
+      {
+        "userId": 21,
+        "name": "대기자B"
+      }
+    ]
+  },
+  {
+    "clubId": 4,
+    "active": false,
+    "count": 5,
+    "members": [
+      {
+        "userId": 30,
+        "name": "대기자X"
+      },
+      {
+        "userId": 31,
+        "name": "대기자Y"
+      },
+      {
+        "userId": 32,
+        "name": "대기자Z"
+      },
+      {
+        "userId": 33,
+        "name": "대기자W"
+      },
+      {
+        "userId": 34,
+        "name": "대기자V"
+      }
+    ]
+  }
+]
