@@ -89,17 +89,30 @@ const ProfileImageWrapper = styled.div`
   height: 110px;
   border-radius: 50%;
   border: 1px solid #50555c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
+  ${props => props.$isPlaceholder ? `
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ` : ''}
 `;
 
 const ProfileImage = styled.img`
-  width: ${props => props.$isPlaceholder ? '70%' : '100%'};
-  height: ${props => props.$isPlaceholder ? '70%' : '100%'};
-  border-radius: 50%;
+  ${props => props.$isPlaceholder ? `
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+  ` : `
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  `}
   object-fit: cover;
+  object-position: center;
+  display: block;
 `;
 
 const ChangeImageButton = styled.button`
@@ -348,6 +361,14 @@ export default function ProfileEditPage() {
     }
   }, [user]);
 
+  // 플레이스홀더 이미지인지 확인 (profile.svg만 플레이스홀더로 취급)
+  // 실제 렌더링되는 src 값을 기준으로 판단
+  const isPlaceholderImage = () => {
+    const src = profileImage || '/assets/profile.svg';
+    // profile.svg만 플레이스홀더로 취급 (profile-mock.jpg는 실제 프로필 이미지)
+    return src.includes('profile.svg');
+  };
+
   // 뒤로가기
   const handleBack = () => {
     navigate('/mypage');
@@ -454,11 +475,11 @@ export default function ProfileEditPage() {
       <Divider />
 
       <ProfileImageSection>
-        <ProfileImageWrapper>
+        <ProfileImageWrapper $isPlaceholder={isPlaceholderImage()}>
           <ProfileImage
-            src={profileImage || '/assets/profile-mock.jpg'}
+            src={profileImage || '/assets/profile.svg'}
             alt="프로필 이미지"
-            $isPlaceholder={!profileImage || profileImage.includes('profile-mock.jpg') || profileImage.includes('profile.svg')}
+            $isPlaceholder={isPlaceholderImage()}
           />
         </ProfileImageWrapper>
         <ChangeImageButton onClick={handleImageChange}>
