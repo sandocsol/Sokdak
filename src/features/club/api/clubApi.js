@@ -120,11 +120,29 @@ export const searchClubs = async (query) => {
 /**
  * 동아리 가입신청
  * @param {string|number} clubId - 동아리 ID
- * @returns {Promise}
+ * @returns {Promise<{clubId: number, userId: number, requestStatus: string}>}
  */
 export const joinClub = async (clubId) => {
   if (USE_MOCK_DATA) {
-    throw new Error('Join is not supported in mock data mode');
+    // 목데이터: user-profile.json에서 현재 사용자 ID 가져오기
+    let userId = 1; // 기본값
+    try {
+      const profileEndpoint = getApiUrl('/data/user-profile.json');
+      const profileResponse = await apiClient.get(profileEndpoint);
+      userId = profileResponse.data?.id || 1;
+    } catch (err) {
+      console.warn('Failed to load user profile for mock data, using default userId:', err);
+    }
+
+    // 목데이터 응답: API 스펙에 맞춰 PENDING 상태 반환
+    // 실제 API 호출을 시뮬레이션하기 위해 약간의 지연 추가
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    return {
+      clubId: Number(clubId),
+      userId: userId,
+      requestStatus: 'PENDING'
+    };
   }
   const response = await apiClient.post(API_ENDPOINTS.CLUBS.JOIN(clubId));
   return response.data;

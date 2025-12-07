@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { joinClub } from "../api/clubApi.js";
 
 const Container = styled.div`
   display: flex;
@@ -55,7 +57,11 @@ const ActionButton = styled.button`
 `;
 
 const RequestButton = styled(ActionButton)`
-  background: #2ab7ca;
+  background: ${(props) => {
+    if (props.$isPending) return "#b9d0d3";
+    if (props.disabled) return "#b9d0d3";
+    return "#2ab7ca";
+  }};
 `;
 
 const PraiseButton = styled(ActionButton)`
@@ -66,14 +72,38 @@ const PraiseButton = styled(ActionButton)`
  * 동아리 가입 액션 버튼 컴포넌트
  * @param {object} club - 동아리 정보
  * @param {boolean} isMember - 멤버 여부 (칭찬하러 가기 버튼 활성화 여부)
+ * @param {function} onStatusChange - requestStatus가 변경될 때 호출되는 콜백 함수
  */
-export default function ClubJoinActions({ club, isMember = false }) {
+export default function ClubJoinActions({ club, isMember = false, onStatusChange }) {
   const navigate = useNavigate();
+  const [requestStatus, setRequestStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRequestMembership = () => {
-    // TODO: 멤버 요청 API 호출
-    console.log("멤버 요청:", club);
-    // 멤버 요청 후 처리 로직
+  const handleRequestMembership = async () => {
+    if (!club || !club.clubId) {
+      console.error("동아리 정보가 없습니다.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await joinClub(club.clubId);
+      
+      // 응답에서 requestStatus 확인
+      if (response?.requestStatus === "PENDING") {
+        setRequestStatus("PENDING");
+        // 부모 컴포넌트에 상태 변경 알림
+        if (onStatusChange) {
+          onStatusChange("PENDING");
+        }
+      }
+    } catch (err) {
+      console.error("멤버 요청 실패:", err);
+      // TODO: 에러 메시지를 사용자에게 표시하는 UI 추가
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoToPraise = () => {
@@ -82,10 +112,16 @@ export default function ClubJoinActions({ club, isMember = false }) {
     }
   };
 
+  const isPending = requestStatus === "PENDING";
+
   return (
     <Container>
-      <RequestButton onClick={handleRequestMembership}>
-        멤버 요청하기
+      <RequestButton 
+        onClick={handleRequestMembership}
+        disabled={isPending || isLoading}
+        $isPending={isPending}
+      >
+        {isLoading ? "요청 중..." : isPending ? "승인 대기 중" : "멤버 요청하기"}
       </RequestButton>
       <PraiseButton disabled={!isMember} onClick={handleGoToPraise}>
         칭찬하러 가기
