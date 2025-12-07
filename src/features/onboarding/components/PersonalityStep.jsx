@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import ProgressBar from '../../../components/ProgressBar.jsx';
 
 const Container = styled.div`
   width: 100%;
@@ -11,20 +12,77 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-// 진행 바
-const ProgressBar = styled.div`
-  display: flex;
-  gap: 6px;
+// 진행 바 wrapper
+const ProgressBarWrapper = styled.div`
   padding: 101px 30px 0 30px;
+  flex-shrink: 0;
+  width: 100%;
+`;
+
+// 뒤로가기 버튼 wrapper
+const BackButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 27px;
+  margin-top: 20px;
   flex-shrink: 0;
 `;
 
-const ProgressStep = styled.div`
-  height: 6px;
-  width: 50px;
-  border-radius: 5px;
-  background: ${props => props.$active ? '#2ab7ca' : '#d9d9d9'};
+// 뒤로가기 버튼
+const BackButton = styled.button`
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:active {
+    opacity: 0.8;
+    outline: none;
+    box-shadow: none;
+  }
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 `;
+
+// 뒤로가기 아이콘 컴포넌트
+const BackIcon = () => (
+  <svg width="40px" height="40px" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(13.33, 8.33)">
+      <path
+        d="M11.67 0L0 11.67L11.67 23.33"
+        stroke="#9E9E9E"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+  </svg>
+);
 
 // 제목
 const Title = styled.h1`
@@ -103,7 +161,7 @@ const CompleteButton = styled.button`
   height: 50px;
   background: ${props => props.$disabled ? '#b9d0d3' : '#2ab7ca'};
   border: none;
-  border-radius: 10px;
+  border-radius: 25px;
   font-family: 'Pretendard', sans-serif;
   font-weight: 600;
   font-size: 16px;
@@ -130,7 +188,7 @@ const PERSONALITY_OPTIONS = [
   '논리적인',
 ];
 
-export default function PersonalityStep({ data, onUpdate, onNext, onBack }) {
+export default function PersonalityStep({ currentStep = 4, data, onUpdate, onNext, onBack }) {
   const [selectedPersonality, setSelectedPersonality] = useState(data.personality || '');
 
   const handleSelectPersonality = (personality) => {
@@ -149,12 +207,15 @@ export default function PersonalityStep({ data, onUpdate, onNext, onBack }) {
 
   return (
     <Container>
-      <ProgressBar>
-        <ProgressStep $active={true} />
-        <ProgressStep $active={true} />
-        <ProgressStep $active={true} />
-        <ProgressStep $active={true} />
-      </ProgressBar>
+      <ProgressBarWrapper>
+        <ProgressBar currentStep={currentStep} totalSteps={4} />
+      </ProgressBarWrapper>
+      
+      <BackButtonWrapper>
+        <BackButton onClick={onBack}>
+          <BackIcon />
+        </BackButton>
+      </BackButtonWrapper>
 
       <Title>성격을 선택해주세요</Title>
 

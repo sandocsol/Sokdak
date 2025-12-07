@@ -31,6 +31,7 @@ export default function OnboardingPage() {
       case 1:
         return (
           <NameAndGenderStep
+            currentStep={currentStep}
             data={onboardingData}
             onUpdate={updateStepData}
             onNext={handleNext}
@@ -39,6 +40,7 @@ export default function OnboardingPage() {
       case 2:
         return (
           <UniversityStep
+            currentStep={currentStep}
             data={onboardingData}
             onUpdate={updateStepData}
             onNext={handleNext}
@@ -48,6 +50,7 @@ export default function OnboardingPage() {
       case 3:
         return (
           <ClubStep
+            currentStep={currentStep}
             data={onboardingData}
             onUpdate={updateStepData}
             onNext={handleNext}
@@ -57,6 +60,7 @@ export default function OnboardingPage() {
       case 4:
         return (
           <PersonalityStep
+            currentStep={currentStep}
             data={onboardingData}
             onUpdate={updateStepData}
             onNext={handleNext}

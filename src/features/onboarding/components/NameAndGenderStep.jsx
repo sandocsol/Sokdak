@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import ProgressBar from '../../../components/ProgressBar.jsx';
 
 const Container = styled.div`
   width: 100%;
@@ -11,19 +12,11 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-// 진행 바
-const ProgressBar = styled.div`
-  display: flex;
-  gap: 6px;
+// 진행 바 wrapper
+const ProgressBarWrapper = styled.div`
   padding: 101px 30px 0 30px;
   flex-shrink: 0;
-`;
-
-const ProgressStep = styled.div`
-  height: 6px;
-  width: 50px;
-  border-radius: 5px;
-  background: ${props => props.$active ? '#2ab7ca' : '#d9d9d9'};
+  width: 100%;
 `;
 
 // 제목
@@ -183,7 +176,7 @@ const NextButton = styled.button`
   height: 50px;
   background: ${props => props.$disabled ? '#b9d0d3' : '#2ab7ca'};
   border: none;
-  border-radius: 10px;
+  border-radius: 25px;
   font-family: 'Pretendard', sans-serif;
   font-weight: 600;
   font-size: 16px;
@@ -198,7 +191,7 @@ const NextButton = styled.button`
   }
 `;
 
-export default function NameAndGenderStep({ data, onUpdate, onNext }) {
+export default function NameAndGenderStep({ currentStep = 1, data, onUpdate, onNext }) {
   const [name, setName] = useState(data.name || '');
   const [gender, setGender] = useState(data.gender || '');
   const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
@@ -243,12 +236,9 @@ export default function NameAndGenderStep({ data, onUpdate, onNext }) {
 
   return (
     <Container>
-      <ProgressBar>
-        <ProgressStep $active={true} />
-        <ProgressStep $active={false} />
-        <ProgressStep $active={false} />
-        <ProgressStep $active={false} />
-      </ProgressBar>
+      <ProgressBarWrapper>
+        <ProgressBar currentStep={currentStep} totalSteps={4} />
+      </ProgressBarWrapper>
 
       <Title>이름과 성별을 입력해주세요</Title>
 
