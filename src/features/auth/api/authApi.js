@@ -2,8 +2,8 @@ import { apiClient, API_ENDPOINTS } from '../../../lib/apiClient.js';
 
 /**
  * 로그인 API
- * @param {object} credentials - 로그인 정보 { username, password } 또는 { email, password }
- * @returns {Promise} 로그인 성공 시 응답 데이터
+ * @param {object} credentials - 로그인 정보 { email, password }
+ * @returns {Promise<object>} 로그인 성공 시 memberdto 반환 (id, email, name, nickname, avatarUrl, status, clubs)
  */
 export const login = async (credentials) => {
   const response = await apiClient.post(API_ENDPOINTS.MEMBERS.LOGIN, credentials);

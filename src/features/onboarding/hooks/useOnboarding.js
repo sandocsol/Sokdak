@@ -71,35 +71,48 @@ export default function useOnboarding() {
         throw new Error('모든 카테고리를 선택해주세요.');
       }
 
+      // 성별을 API 형식으로 변환 (남성 -> male, 여성 -> female)
+      const genderMapping = {
+        '남성': 'male',
+        '여성': 'female',
+      };
+      const apiGender = genderMapping[onboardingData.gender] || onboardingData.gender;
+
       // 회원가입 API 요청 데이터 구성
       const registerData = {
         email: onboardingData.email,
         password: onboardingData.password,
         name: onboardingData.name,
-        nickname: registrationInfo.nickname || onboardingData.name, // 닉네임이 없으면 이름 사용
+        nickname: null,
         avatarUrl: registrationInfo.avatarUrl || '',
+        gender: apiGender,
         selections: onboardingData.selections,
       };
 
       // 회원가입 API 호출
       await register(registerData);
 
-      // 회원가입 성공 후 자동 로그인
+      // 회원가입 성공 후 자동 로그인 (사용자 정보 로드는 건너뜀 - 서버가 아직 준비되지 않았을 수 있음)
       if (registerData.email && registerData.password) {
         try {
+          // skipUserProfile 옵션으로 사용자 정보 로드를 건너뜀 (500 에러 방지)
           await login({
             email: registerData.email,
             password: registerData.password,
-          });
-        } catch (loginError) {
-          console.warn('자동 로그인 실패:', loginError);
-          // 로그인 실패해도 회원가입은 완료되었으므로 로그인 페이지로 이동
+          }, { skipUserProfile: true });
+          
+          // 자동 로그인 성공 시 홈으로 이동
+          navigate('/');
+          return;
+        } catch {
+          // 로그인 실패 시 로그인 페이지로 이동
+          // (에러 메시지 출력하지 않음 - 서버가 아직 준비되지 않았을 수 있음)
           navigate('/login');
           return;
         }
       }
 
-      // 온보딩 완료 후 홈으로 이동
+      // 회원가입만 성공하고 자동 로그인을 시도하지 않은 경우 홈으로 이동
       navigate('/');
     } catch (err) {
       console.error('회원가입 실패:', err);

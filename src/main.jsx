@@ -14,6 +14,7 @@ import ProfileFieldEditPage from "./pages/ProfileFieldEditPage.jsx";
 import ClubSearchPage from "./pages/ClubSearchPage.jsx";
 import ClubJoinPage from "./pages/ClubJoinPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
 import { AuthProvider } from "./features/auth/AuthProvider.jsx";
 // 개발 모드에서 세션 쿠키 유틸리티 초기화
 import "./lib/sessionUtils.js";
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "onboarding",
         element: <OnboardingPage />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
       },
     ],
   },

@@ -32,17 +32,29 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-      if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const currentPath = window.location.pathname;
+    const publicPaths = ['/onboarding', '/login'];
+    const isPublicPath = publicPaths.some(path => currentPath === path || currentPath.startsWith(path));
+    
+    if (status === 401) {
       // SKIP_AUTH가 true이면 리다이렉트하지 않음 (다른 기능 테스트 가능)
       if (!SKIP_AUTH) {
-        // 세션 만료 또는 인증 실패 시 처리
-        // 로그인 페이지로 리다이렉트
-        window.location.href = '/login';
+        // 인증이 필요 없는 페이지에서는 리다이렉트하지 않음
+        if (!isPublicPath) {
+          // 세션 만료 또는 인증 실패 시 처리
+          // 로그인 페이지로 리다이렉트
+          window.location.href = '/login';
+        }
       } else {
         // 인증 우회 모드에서는 콘솔에만 경고 출력
         console.warn('401 Unauthorized - 인증이 필요합니다. (인증 우회 모드: 리다이렉트 비활성화)');
       }
+    } else if (status >= 500 && isPublicPath) {
+      // 회원가입/로그인 페이지에서 서버 에러는 조용히 처리 (콘솔에 출력하지 않음)
+      // 에러는 reject하되, 콘솔에는 표시되지 않도록 함
     }
+    
     return Promise.reject(error);
   }
 );
@@ -84,6 +96,8 @@ export const API_ENDPOINTS = {
     GIVE: (clubId, userId) => `/api/compliments/clubs/${clubId}/users/${userId}`,
     SELECT: '/api/compliments/select',
     EMBEDDING: '/api/compliments/embedding',
+    RECEIVE: '/api/compliments/receive',
+    SEND: '/api/compliments/send',
   },
 
   // 랭킹 관련
