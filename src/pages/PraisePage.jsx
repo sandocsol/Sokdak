@@ -311,7 +311,7 @@ export default function PraisePage() {
   const { data: userProfile, loading: userLoading, error: userError } = useUserProfile();
   const currentUserId = userProfile?.id || userProfile?.userId;
 
-  const { data: praiseCategories, loading, error } = usePraiseCategories(clubId, currentUserId);
+  const { data: praiseCategories, loading, error } = usePraiseCategories(clubId);
   const [isAnonymous, setIsAnonymous] = useState(true); // 기본값: 익명 선택
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0); // 현재 칭찬 카테고리 인덱스
 
@@ -363,7 +363,7 @@ export default function PraisePage() {
     }
     
     try {
-      // 칭찬 전송 API 호출 (isAnonymous 포함)
+      // 칭찬 전송 API 호출 (complimentId, userId, isAnonymous 포함)
       await sendCompliment(currentCategory.complimentId, selectedUserId, isAnonymous);
       console.log("Compliment sent:", {
         complimentId: currentCategory.complimentId,

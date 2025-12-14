@@ -12,11 +12,19 @@ export const login = async (credentials) => {
 
 /**
  * 회원가입 API
- * @param {object} registerData - 회원가입 정보 { email, password, name, nickname, avatarUrl, selections }
+ * @param {object} registerData - 회원가입 정보 { email, password, name, nickname, avatarUrl, gender, selections }
  * @returns {Promise} 회원가입 성공 시 응답 데이터
  */
 export const register = async (registerData) => {
+  // 디버깅: API 요청 데이터 로그
+  console.log('[register API] 요청 데이터:', registerData);
+  console.log('[register API] gender 필드:', registerData.gender);
+  
   const response = await apiClient.post(API_ENDPOINTS.MEMBERS.REGISTER, registerData);
+  
+  // 디버깅: API 응답 데이터 로그
+  console.log('[register API] 응답 데이터:', response.data);
+  
   return response.data;
 };
 

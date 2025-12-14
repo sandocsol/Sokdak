@@ -135,11 +135,17 @@ export default function SettingsModal({ isOpen, onClose }) {
   };
 
   // 로그아웃 처리
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (confirm('로그아웃하시겠습니까?')) {
-      logout();
-      alert('로그아웃되었습니다.');
-      onClose();
+      try {
+        await logout();
+        onClose();
+        navigate('/login');
+      } catch (error) {
+        console.error('로그아웃 실패:', error);
+        // 에러가 발생해도 로그인 페이지로 이동
+        navigate('/login');
+      }
     }
   };
 

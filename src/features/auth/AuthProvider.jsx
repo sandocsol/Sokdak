@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { AuthContext } from './AuthContext.js';
-import { getUserProfile } from '../profile/api/userApi.js';
+import { getUserProfile, updateUserProfile } from '../profile/api/userApi.js';
 import { login as loginApi, logout as logoutApi } from './api/authApi.js';
 import { SKIP_AUTH } from '../../lib/apiClient.js';
 
@@ -40,6 +40,16 @@ export function AuthProvider({ children }) {
           if (!userData.selectedClubId && userData.clubs && userData.clubs.length > 0) {
             userData.selectedClubId = userData.clubs[0].id.toString();
           }
+          
+          // 성별을 프론트엔드 표시 형식으로 변환 (male -> 남성, female -> 여성)
+          const genderDisplayMapping = {
+            'male': '남성',
+            'female': '여성',
+          };
+          if (userData.gender && genderDisplayMapping[userData.gender]) {
+            userData.gender = genderDisplayMapping[userData.gender];
+          }
+          
           setUser(userData);
         }
       } catch (err) {
@@ -47,8 +57,13 @@ export function AuthProvider({ children }) {
           const status = err.response?.status;
           const isUnauthorized = status === 401;
           
-          if (isUnauthorized || SKIP_AUTH) {
-            // 인증되지 않은 상태는 에러가 아님 (정상적인 상황)
+          if (isUnauthorized) {
+            // 401 에러는 apiClient 인터셉터에서 로그인 페이지로 리다이렉트 처리
+            // 여기서는 상태만 초기화
+            setError(null);
+            setUser(null);
+          } else if (SKIP_AUTH) {
+            // 인증 우회 모드에서는 에러가 아님
             setError(null);
             setUser(null);
           } else {
@@ -133,6 +148,15 @@ export function AuthProvider({ children }) {
         userData.selectedClubId = userData.clubs[0].id.toString();
       }
       
+      // 성별을 프론트엔드 표시 형식으로 변환 (male -> 남성, female -> 여성)
+      const genderDisplayMapping = {
+        'male': '남성',
+        'female': '여성',
+      };
+      if (userData.gender && genderDisplayMapping[userData.gender]) {
+        userData.gender = genderDisplayMapping[userData.gender];
+      }
+      
       setUser(userData);
       return userData;
     } catch (err) {
@@ -155,18 +179,64 @@ export function AuthProvider({ children }) {
       // 클라이언트 상태 초기화
       setUser(null);
       setError(null);
+      // 로그인 페이지로 리다이렉트
+      window.location.href = '/login';
     }
   };
 
   /**
    * 사용자 정보 업데이트 함수
+   * @param {object} updatedUserData - 업데이트할 사용자 데이터
    */
-  const updateUser = (updatedUserData) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      ...updatedUserData,
-    }));
-  };
+  const updateUser = useCallback(async (updatedUserData) => {
+    try {
+      // API 명세에 따라 허용된 필드만 포함 (name, nickname, avatarUrl)
+      // gender는 회원정보 수정 API에서 지원하지 않으므로 제외
+      // id는 명세에 없으며, 세션 쿠키(JSESSIONID)를 통해 현재 사용자를 식별함
+      const allowedFields = ['name', 'nickname', 'avatarUrl'];
+      const filteredData = Object.keys(updatedUserData)
+        .filter(key => allowedFields.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = updatedUserData[key];
+          return obj;
+        }, {});
+      
+      // 디버깅: 전송할 데이터 로그
+      console.log('[updateUser] 전송할 데이터:', filteredData);
+      
+      // API 호출하여 서버에 업데이트
+      // 세션 쿠키(JSESSIONID)를 통해 현재 사용자를 식별함
+      const updatedUser = await updateUserProfile(filteredData);
+      
+      // API 응답의 성별을 프론트엔드 표시 형식으로 변환 (조회 시에만 사용)
+      const genderDisplayMapping = {
+        'male': '남성',
+        'female': '여성',
+      };
+      if (updatedUser.gender && genderDisplayMapping[updatedUser.gender]) {
+        updatedUser.gender = genderDisplayMapping[updatedUser.gender];
+      }
+      
+      // 로컬 상태도 업데이트
+      setUser((prevUser) => ({
+        ...prevUser,
+        ...updatedUser,
+      }));
+      
+      return updatedUser;
+    } catch (err) {
+      console.error('사용자 정보 업데이트 실패:', err);
+      // 400 에러의 경우 상세 메시지 출력
+      if (err.response?.status === 400) {
+        console.error('400 Bad Request 상세:', {
+          status: err.response.status,
+          data: err.response.data,
+          requestData: updatedUserData,
+        });
+      }
+      throw err;
+    }
+  }, []);
 
   /**
    * 선택된 동아리 변경 함수
@@ -192,7 +262,7 @@ export function AuthProvider({ children }) {
       updateUser,
       setSelectedClubId,
     }),
-    [user, loading, error]
+    [user, loading, error, updateUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

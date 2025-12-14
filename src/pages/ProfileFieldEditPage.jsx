@@ -156,7 +156,7 @@ export default function ProfileFieldEditPage() {
   };
 
   // 완료 버튼 클릭
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (fieldType === 'name' && !value.trim()) {
       alert('이름을 입력해주세요.');
       return;
@@ -172,14 +172,23 @@ export default function ProfileFieldEditPage() {
       return;
     }
 
-    // updateUser로 해당 필드만 업데이트
-    // gender는 trim하지 않음 (공백이 없음)
-    const updateValue = fieldType === 'gender' ? value : value.trim();
-    updateUser({
-      [config.fieldKey]: updateValue,
-    });
+    try {
+      // updateUser로 해당 필드만 업데이트
+      // gender는 trim하지 않음 (공백이 없음)
+      const updateValue = fieldType === 'gender' ? value : value.trim();
+      await updateUser({
+        [config.fieldKey]: updateValue,
+      });
 
-    navigate('/profile/edit');
+      navigate('/profile/edit');
+    } catch (error) {
+      console.error('사용자 정보 업데이트 실패:', error);
+      const errorMessage = error.response?.data?.message 
+        || error.response?.data?.error 
+        || error.message 
+        || '업데이트에 실패했습니다. 다시 시도해주세요.';
+      alert(errorMessage);
+    }
   };
 
   // 필드 타입에 따른 에디터 컴포넌트 렌더링

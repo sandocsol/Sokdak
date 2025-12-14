@@ -51,6 +51,13 @@ export const updateUserProfile = async (userData) => {
     // 목 데이터 모드에서는 업데이트 불가
     throw new Error('Update is not supported in mock data mode');
   }
+  // 디버깅: API 요청 데이터 로그
+  console.log('[updateUserProfile] API 요청:', {
+    endpoint: API_ENDPOINTS.MEMBERS.UPDATE,
+    method: 'PATCH',
+    data: userData,
+  });
+  
   const response = await apiClient.patch(API_ENDPOINTS.MEMBERS.UPDATE, userData);
   return response.data;
 };

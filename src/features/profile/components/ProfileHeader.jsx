@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth.js";
 import SettingsModal from "./SettingsModal.jsx";
+import usePendingMembers from "../../notification/hooks/usePendingMembers.js";
 
 // 로컬 assets 아이콘 경로
 const SETTING_ICON = "/assets/profile-setting.svg";
@@ -93,6 +94,7 @@ const ProfileInfo = styled.div`
   gap: 4px;
   flex: 1;
   margin-top: 13px;
+  padding-right: 120px; /* 버튼들이 겹치지 않도록 오른쪽 여백 추가 */
 `;
 
 const UserName = styled.h2`
@@ -137,19 +139,19 @@ const ActionButtons = styled.div`
   right: 34px;
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 8px;
 `;
 
 const ButtonWrapper = styled.div`
   position: relative;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 `;
 
 const ButtonBackground = styled.div`
   position: absolute;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   top: 0;
@@ -157,8 +159,8 @@ const ButtonBackground = styled.div`
 `;
 
 const IconButton = styled.button`
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -188,30 +190,45 @@ const IconButton = styled.button`
 `;
 
 const SettingIcon = styled.img`
-  width: 21px;
-  height: 21px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
 `;
 
 const EditIcon = styled.img`
-  width: 21px;
-  height: 21px;
+  width: 15px;
+  height: 15px;
   object-fit: contain;
 `;
 
 const BellIcon = styled.img`
-  width: 21px;
-  height: 21px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
+`;
+
+const NotificationBadge = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2AB7CA;
+  pointer-events: none;
 `;
 
 export default function ProfileHeader({ profile: profileProp }) {
   const { user: profileData, loading, error, updateUser } = useAuth();
   const profile = profileProp || profileData;
   const navigate = useNavigate();
+  const { notifications } = usePendingMembers();
   
   // 모달 상태 관리
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  
+  // 알림이 있는지 확인
+  const hasNotifications = notifications && notifications.length > 0;
 
   // 설정 모달 열기
   const handleSettingClick = () => {
@@ -234,16 +251,21 @@ export default function ProfileHeader({ profile: profileProp }) {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = e.target.files[0];
       if (file) {
         // 파일을 읽어서 미리보기 URL 생성
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
           const imageUrl = event.target.result;
-          // updateUser()로 프로필 이미지 업데이트
-          updateUser({ profileImage: imageUrl });
-          alert('프로필 이미지가 변경되었습니다!');
+          try {
+            // updateUser()로 프로필 이미지 업데이트
+            await updateUser({ profileImage: imageUrl });
+            alert('프로필 이미지가 변경되었습니다!');
+          } catch (error) {
+            console.error('프로필 이미지 업데이트 실패:', error);
+            alert('프로필 이미지 변경에 실패했습니다. 다시 시도해주세요.');
+          }
         };
         reader.readAsDataURL(file);
       }
@@ -294,6 +316,7 @@ export default function ProfileHeader({ profile: profileProp }) {
           <ButtonBackground />
           <IconButton onClick={handleNotificationClick} aria-label="알림">
             <BellIcon src={BELL_ICON} alt="알림" />
+            {hasNotifications && <NotificationBadge />}
           </IconButton>
         </ButtonWrapper>
       </ActionButtons>

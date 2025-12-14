@@ -4,10 +4,9 @@ import { getPraiseCategories } from '../api/praiseApi.js';
 /**
  * 칭찬 카테고리 목록을 가져오는 커스텀 훅
  * @param {string|number} clubId - 동아리 ID
- * @param {string|number} userId - 사용자 ID (보낸 사람 ID)
  * @returns {object} { data, loading, error }
  */
-export default function usePraiseCategories(clubId, userId) {
+export default function usePraiseCategories(clubId) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,7 +15,7 @@ export default function usePraiseCategories(clubId, userId) {
     let cancelled = false;
 
     async function load() {
-      if (!clubId || !userId) {
+      if (!clubId) {
         return;
       }
 
@@ -24,7 +23,7 @@ export default function usePraiseCategories(clubId, userId) {
       setError(null);
 
       try {
-        const result = await getPraiseCategories(clubId, userId);
+        const result = await getPraiseCategories(clubId);
         if (!cancelled) setData(result);
       } catch (err) {
         if (!cancelled) setError(err);
@@ -38,7 +37,7 @@ export default function usePraiseCategories(clubId, userId) {
     return () => {
       cancelled = true;
     };
-  }, [clubId, userId]);
+  }, [clubId]);
 
   return { data, loading, error };
 }

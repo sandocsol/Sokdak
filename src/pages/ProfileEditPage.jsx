@@ -403,7 +403,7 @@ export default function ProfileEditPage() {
               
               // 성공 시 로컬 상태 업데이트 (프론트엔드에서는 profileImage 사용)
               setProfileImage(imageUrl);
-              updateUser({ profileImage: imageUrl });
+              await updateUser({ profileImage: imageUrl });
               
               // 사용자에게 알림
               alert('프로필 이미지가 변경되었습니다!');
@@ -468,10 +468,10 @@ export default function ProfileEditPage() {
   //   navigate('/profile/edit/university', { state: { currentValue: university } });
   // };
 
-  // 성별 편집 페이지로 이동
-  const handleGenderClick = () => {
-    navigate('/profile/edit/gender');
-  };
+  // 성별은 회원정보 수정 API에서 지원하지 않으므로 편집 불가
+  // const handleGenderClick = () => {
+  //   navigate('/profile/edit/gender');
+  // };
 
   if (loading) {
     return (
@@ -557,12 +557,6 @@ export default function ProfileEditPage() {
           </ClubsList>
         </FormRow>
 
-        <FormRow>
-          <Label>성별</Label>
-          <FieldValue onClick={handleGenderClick}>
-            {user?.gender || '성별을 선택하세요'}
-          </FieldValue>
-        </FormRow>
       </FormSection>
 
       {showLeaveModal && selectedClub && (

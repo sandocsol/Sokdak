@@ -30,37 +30,50 @@ const transformMemberData = (memberOrMembers) => {
 /**
  * 칭찬 목록을 가져오는 API 함수
  * @param {string|number} clubId - 동아리 ID
- * @param {string|number} userId - 사용자 ID (보낸 사람 ID)
  * @returns {Promise} 칭찬 목록 데이터
  */
-export const getPraiseCategories = async (clubId, userId) => {
+export const getPraiseCategories = async (clubId) => {
   if (USE_MOCK_DATA) {
     // 목 데이터 경로: /data/praise-categories.json
     const endpoint = getApiUrl('/data/praise-categories.json');
     const response = await apiClient.get(endpoint);
     return response.data;
   } else {
-    // POST /api/compliments/clubs/{club_id}/users/{user_id}를 사용하여 칭찬 목록 조회
-    const endpoint = API_ENDPOINTS.COMPLIMENTS.GIVE(clubId, userId);
-    const response = await apiClient.post(endpoint, {});
-    const data = response.data;
+    // POST /api/compliments/clubs/{club_id}를 사용하여 칭찬 목록 조회
+    const endpoint = API_ENDPOINTS.COMPLIMENTS.GIVE(clubId);
+    console.log('[getPraiseCategories] Request:', { endpoint, clubId });
     
-    // 백엔드 응답을 프론트엔드 형식으로 변환
-    // 각 카테고리의 candidates 또는 users 배열 변환
-    if (Array.isArray(data)) {
-      return data.map(category => ({
-        ...category,
-        candidates: category.candidates ? transformMemberData(category.candidates) : [],
-        users: category.users ? transformMemberData(category.users) : [],
-      }));
-    } else if (data && typeof data === 'object') {
-      return {
-        ...data,
-        candidates: data.candidates ? transformMemberData(data.candidates) : [],
-        users: data.users ? transformMemberData(data.users) : [],
-      };
+    try {
+      const response = await apiClient.post(endpoint, {});
+      const data = response.data;
+      console.log('[getPraiseCategories] Response:', data);
+      
+      // 백엔드 응답을 프론트엔드 형식으로 변환
+      // 각 카테고리의 candidates 또는 users 배열 변환
+      if (Array.isArray(data)) {
+        return data.map(category => ({
+          ...category,
+          candidates: category.candidates ? transformMemberData(category.candidates) : [],
+          users: category.users ? transformMemberData(category.users) : [],
+        }));
+      } else if (data && typeof data === 'object') {
+        return {
+          ...data,
+          candidates: data.candidates ? transformMemberData(data.candidates) : [],
+          users: data.users ? transformMemberData(data.users) : [],
+        };
+      }
+      return data;
+    } catch (error) {
+      console.error('[getPraiseCategories] Error:', {
+        endpoint,
+        clubId,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+      });
+      throw error;
     }
-    return data;
   }
 };
 
@@ -75,10 +88,11 @@ export const giveCompliment = async (complimentId, userId, isAnonymous = true) =
   if (USE_MOCK_DATA) {
     throw new Error('Give compliment is not supported in mock data mode');
   }
-  const response = await apiClient.post(API_ENDPOINTS.COMPLIMENTS.SELECT, {
+  const endpoint = API_ENDPOINTS.COMPLIMENTS.SELECT;
+  const response = await apiClient.patch(endpoint, {
     complimentId,
     userId,
-    isAnonymous,
+    anonymity: isAnonymous,
   });
   return response.data;
 };

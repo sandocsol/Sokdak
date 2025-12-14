@@ -60,57 +60,12 @@ apiClient.interceptors.response.use(
     const isPublicPath = publicPaths.some(path => currentPath === path || currentPath.startsWith(path));
     
     if (status === 401) {
-      // 디버깅: 어떤 API에서 401이 발생했는지 로그 출력
-      const requestUrl = error.config?.url || error.config?.baseURL + error.config?.url || 'unknown';
-      const requestMethod = error.config?.method?.toUpperCase() || 'UNKNOWN';
-      console.error(`[401 Unauthorized] ${requestMethod} ${requestUrl}`);
-      console.error('Error details:', {
-        url: requestUrl,
-        method: requestMethod,
-        path: currentPath,
-        response: error.response?.data,
-      });
-      
-      // 쿠키 전송 문제 진단
-      const cookies = document.cookie;
-      const hasSessionCookie = cookies.includes('JSESSIONID');
-      const requestOrigin = window.location.origin;
-      const apiOrigin = error.config?.baseURL || new URL(requestUrl).origin;
-      const isCrossOrigin = requestOrigin !== apiOrigin;
-      
-      console.error('[401 진단 정보]', {
-        '브라우저 쿠키 존재': hasSessionCookie ? '있음' : '없음',
-        '쿠키 내용': cookies || '(없음)',
-        '요청 Origin': requestOrigin,
-        'API Origin': apiOrigin,
-        '크로스 오리진 요청': isCrossOrigin ? '예' : '아니오',
-        'withCredentials': error.config?.withCredentials,
-        '문제 원인': !hasSessionCookie 
-          ? 'JSESSIONID 쿠키가 브라우저에 없습니다. 로그인을 다시 시도하세요.'
-          : isCrossOrigin 
-            ? '크로스 오리진 요청에서 쿠키가 전송되지 않습니다. 백엔드에서 Set-Cookie에 SameSite=None; Secure를 추가해야 합니다.'
-            : '알 수 없는 원인'
-      });
-      
       // SKIP_AUTH가 true이면 리다이렉트하지 않음 (다른 기능 테스트 가능)
       if (!SKIP_AUTH) {
-        // 인증이 필요 없는 페이지에서는 리다이렉트하지 않음
+        // 온보딩/로그인 페이지를 제외한 모든 페이지에서 401 에러 발생 시 로그인 페이지로 리다이렉트
         if (!isPublicPath) {
-          // AuthProvider가 처리하는 API들은 인터셉터에서 리다이렉트하지 않음
-          // 이렇게 하면 각 컴포넌트/훅에서 에러를 처리할 수 있음
-          const isAuthProviderManaged = 
-            requestUrl.includes('/api/members/me') ||
-            requestUrl.includes('/api/compliments/receive') ||
-            requestUrl.includes('/api/compliments/send');
-          
-          if (!isAuthProviderManaged) {
-            // 세션 만료 또는 인증 실패 시 처리
-            // 로그인 페이지로 리다이렉트
-            console.warn('리다이렉트: 로그인 페이지로 이동합니다.');
-            window.location.href = '/login';
-          } else {
-            console.warn('401 에러는 컴포넌트에서 처리됩니다. 리다이렉트하지 않습니다.');
-          }
+          // 세션 만료 또는 인증 실패 시 로그인 페이지로 리다이렉트
+          window.location.href = '/login';
         }
       } else {
         // 인증 우회 모드에서는 콘솔에만 경고 출력
@@ -193,7 +148,7 @@ export const API_ENDPOINTS = {
 
   // 칭찬 관련
   COMPLIMENTS: {
-    GIVE: (clubId, userId) => `/api/compliments/clubs/${clubId}/users/${userId}`,
+    GIVE: (clubId) => `/api/compliments/clubs/${clubId}`,
     SELECT: '/api/compliments/select',
     EMBEDDING: '/api/compliments/embedding',
     RECEIVE: '/api/compliments/received',

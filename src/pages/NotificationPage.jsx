@@ -119,8 +119,8 @@ const NotificationContent = styled.div`
 
 const NotificationText = styled.div`
   font-family: 'Pretendard', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 14px;
   line-height: 18px;
   color: #cfcfcf;
   margin: 0;
@@ -158,7 +158,7 @@ const RejectButton = styled.button`
   background: transparent;
   color: #2ab7ca;
   font-family: 'Pretendard', sans-serif;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 14px;
   line-height: 16px;
   padding: 8px 10px;
@@ -185,7 +185,7 @@ const AcceptButton = styled.button`
   background: #2ab7ca;
   color: #ffffff;
   font-family: 'Pretendard', sans-serif;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 14px;
   line-height: 16px;
   padding: 8px 10px;

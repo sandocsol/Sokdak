@@ -222,8 +222,10 @@ export default function NameAndGenderStep({ currentStep = 1, totalSteps = 6, dat
   };
 
   const handleGenderSelect = (selectedGender) => {
+    console.log('[NameAndGenderStep] 성별 선택:', selectedGender);
     setGender(selectedGender);
     setIsGenderDropdownOpen(false);
+    console.log('[NameAndGenderStep] onUpdate 호출 - gender:', selectedGender);
     onUpdate({ gender: selectedGender });
   };
 
