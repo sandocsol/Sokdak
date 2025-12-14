@@ -159,6 +159,12 @@ export const API_ENDPOINTS = {
   RANKING: {
     GET: '/api/ranking',
   },
+
+  // 뱃지 관련
+  BADGES: {
+    GET_ALL: '/api/badges',
+    GET_MINE: '/api/badges/mine',
+  },
 };
 
 /**

@@ -71,7 +71,7 @@ export default function BadgeList({ badges: badgesProp }) {
         <BadgeItem key={badge.id}>
           {badge.isEarned ? (
             <BadgeImage 
-              src={badge.imageUrl} 
+              src={badge.iconUrl || badge.imageUrl} 
               alt={badge.name}
             />
           ) : (
