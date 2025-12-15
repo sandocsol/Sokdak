@@ -19,7 +19,7 @@ const ProgressBarWrapper = styled.div`
   width: 100%;
   
   @media (max-height: 700px) {
-    padding: 30px 30px 0 30px;
+    padding: 30px 30px 30px 30px;
   }
 `;
 

@@ -48,6 +48,12 @@ const ProgressBarWrapper = styled.div`
   top: 97px;
   transform: translateX(-50%);
   width: 333px;
+  padding: 0 30px;
+  
+  @media (max-height: 700px) {
+    top: 30px;
+    padding: 30px 30px 30px 30px;
+  }
 `;
 
 const Title = styled.p`

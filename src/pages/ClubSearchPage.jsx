@@ -6,16 +6,20 @@ import useSearchClubs from "../features/club/hooks/useSearchClubs.js";
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  min-height: 100vh;
   background: #222222;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 100px;
+  box-sizing: border-box;
 `;
 
 const BackButton = styled.button`
   position: absolute;
   left: 23px;
-  top: 70px;
+  top: 30px;
   width: 40px;
   height: 40px;
   background: none;
@@ -44,7 +48,7 @@ const BackButton = styled.button`
 const CreateClubText = styled.p`
   position: absolute;
   right: 30px;
-  top: 81px;
+  top: 30px;
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 400;
   font-size: 16px;
@@ -208,11 +212,12 @@ const Divider = styled.div`
 `;
 
 const NextButton = styled.button`
-  position: absolute;
+  position: fixed;
   left: 50%;
-  top: 707px;
+  bottom: 30px;
   transform: translateX(-50%);
   width: 333px;
+  max-width: calc(100vw - 40px);
   height: 50px;
   background: ${(props) => (props.disabled ? "#B9D0D3" : "#2AB7CA")};
   border: none;
@@ -222,6 +227,8 @@ const NextButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
   
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 600;
@@ -230,6 +237,14 @@ const NextButton = styled.button`
   color: white;
   text-align: center;
   white-space: nowrap;
+  
+  @media (max-height: 700px) {
+    bottom: 20px;
+  }
+  
+  @media (max-height: 600px) {
+    bottom: 10px;
+  }
   
   &:hover {
     opacity: ${(props) => (props.disabled ? 1 : 0.9)};

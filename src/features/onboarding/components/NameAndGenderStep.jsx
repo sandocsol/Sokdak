@@ -17,6 +17,10 @@ const ProgressBarWrapper = styled.div`
   padding: 101px 30px 0 30px;
   flex-shrink: 0;
   width: 100%;
+  
+  @media (max-height: 700px) {
+    padding: 30px 30px 30px 30px;
+  }
 `;
 
 // 제목
