@@ -65,15 +65,10 @@ const BackButton = styled.button`
 
 const ProgressBarWrapper = styled.div`
   margin: 0 auto;
-  margin-top: 20px;
   display: flex;
-  justify-content: center;
-  padding: 0 30px;
-  
-  @media (max-height: 700px) {
-    margin-top: 0;
-    padding: 30px 30px 30px 30px;
-  }
+  justify-content: center;  
+  margin-top: 0;
+  padding: 30px 30px 30px 30px;
 `;
 
 const Title = styled.h2`
