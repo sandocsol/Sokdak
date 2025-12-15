@@ -4,6 +4,7 @@ import styled from "styled-components";
 import ClubSelector from "../components/ClubSelector/ClubSelector.jsx";
 import useClub from "../features/club/hooks/useClub.js";
 import useClubMembers from "../features/club/hooks/useClubMembers.js";
+import useClubRankings from "../features/ranking/hooks/useClubRankings.js";
 import { useSelectedClub } from "../features/club/useSelectedClub.js";
 import { useAuth } from "../features/auth/useAuth.js";
 import ClubInfoCardPage from "../features/club/components/ClubInfoCardPage.jsx";
@@ -174,6 +175,7 @@ export default function ClubPage() {
   const { selectedClub, userClubs, loading, changeSelectedClub } = useSelectedClub();
   const { data: club, loading: clubLoading, error: clubError } = useClub(clubId);
   const { data: membersData, loading: membersLoading, error: membersError } = useClubMembers(clubId);
+  const { data: rankingsData, loading: rankingsLoading, error: rankingsError } = useClubRankings(clubId, 3);
   const containerRef = useRef(null);
   const contentRef = useRef(null);
   const [needsScroll, setNeedsScroll] = useState(false);
@@ -205,7 +207,7 @@ export default function ClubPage() {
       window.removeEventListener('resize', checkScroll);
       clearTimeout(timer);
     };
-  }, [club, membersData, clubLoading, membersLoading]);
+  }, [club, membersData, rankingsData, clubLoading, membersLoading, rankingsLoading]);
 
   // clubId는 항상 있어야 함 (라우팅에서 보장)
   if (!clubId) {
@@ -222,9 +224,9 @@ export default function ClubPage() {
   };
 
   // 멤버 데이터 추출
-  const topMembers = membersData?.rankings || [];
+  const topMembers = rankingsData || [];
   const members = membersData?.members || [];
-  const memberCount = membersData?.memberCount || 0;
+  const memberCount = membersData?.memberCount || club?.activeMemberCount || 0;
 
   // 사용자가 가입한 동아리가 없을 때
   if (!loading && userClubs.length === 0) {
@@ -240,7 +242,7 @@ export default function ClubPage() {
     );
   }
 
-  if (clubLoading || membersLoading) {
+  if (clubLoading || membersLoading || rankingsLoading) {
     return (
       <Container ref={containerRef} $needsScroll={false}>
         <div ref={contentRef}>
@@ -274,6 +276,11 @@ export default function ClubPage() {
         </div>
       </Container>
     );
+  }
+
+  // 랭킹 에러는 치명적이지 않으므로 무시하고 빈 배열로 처리
+  if (rankingsError) {
+    console.warn('랭킹 정보를 불러올 수 없습니다:', rankingsError);
   }
 
   return (

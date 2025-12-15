@@ -67,6 +67,10 @@ const router = createBrowserRouter([
         element: <PraisePage />,
       },
       {
+        path: "onboarding/:step",
+        element: <OnboardingPage />,
+      },
+      {
         path: "onboarding",
         element: <OnboardingPage />,
       },

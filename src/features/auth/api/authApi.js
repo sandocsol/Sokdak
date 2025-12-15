@@ -44,3 +44,21 @@ export const logout = async () => {
   }
 };
 
+/**
+ * 이메일 중복 체크 API
+ * 별도의 이메일 중복 확인 API가 없으므로 항상 false를 반환
+ * 실제 중복 확인은 회원가입 시 에러로 처리됨
+ * @param {string} email - 체크할 이메일
+ * @returns {Promise<{isDuplicate: boolean, error?: string}>} 중복 여부와 에러 메시지
+ */
+export const checkEmailDuplicate = async (email) => {
+  // 별도의 이메일 중복 확인 API가 없으므로
+  // 클라이언트 측에서 이메일 형식만 검증하고,
+  // 실제 중복 확인은 회원가입 시 에러로 처리
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { isDuplicate: false, error: '올바른 이메일 형식을 입력해주세요.' };
+  }
+  return { isDuplicate: false };
+};
+

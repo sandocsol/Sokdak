@@ -56,6 +56,7 @@ export default function AppShell({ children }) {
     location.pathname !== "/club/search" &&
     location.pathname !== "/club/create" &&
     location.pathname !== "/onboarding" &&
+    !location.pathname.startsWith("/onboarding/") &&
     location.pathname !== "/login" &&
     location.pathname !== "/notifications" &&
     !location.pathname.startsWith("/profile/edit") &&

@@ -1,9 +1,32 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth.js';
 import { register } from '../../auth/api/authApi.js';
 
 const TOTAL_STEPS = 7;
+const STORAGE_KEY = 'onboarding_data';
+
+// 단계별 라우트 매핑
+const STEP_ROUTES = {
+  1: 'email-password',
+  2: 'name-gender',
+  3: 'personality-1',
+  4: 'personality-2',
+  5: 'personality-3',
+  6: 'personality-4',
+  7: 'personality-5',
+};
+
+// 라우트에서 단계 번호로 변환
+const ROUTE_TO_STEP = {
+  'email-password': 1,
+  'name-gender': 2,
+  'personality-1': 3,
+  'personality-2': 4,
+  'personality-3': 5,
+  'personality-4': 6,
+  'personality-5': 7,
+};
 
 /**
  * 온보딩 프로세스를 관리하는 커스텀 훅
@@ -12,26 +35,61 @@ const TOTAL_STEPS = 7;
 export default function useOnboarding() {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
   const { login } = useAuth();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [onboardingData, setOnboardingData] = useState({
-    email: '',
-    password: '',
-    name: '',
-    gender: '',
-    selections: [], // { categoryCode, optionLabel, rank } 배열
-  });
+  
+  // URL에서 단계 읽기 (라우트 이름으로)
+  const routeName = params.step || 'email-password';
+  const stepFromRoute = ROUTE_TO_STEP[routeName] || 1;
+  const [currentStep, setCurrentStep] = useState(stepFromRoute);
+  
+  // localStorage에서 데이터 복원
+  const loadStoredData = () => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      console.error('Failed to load onboarding data from localStorage:', error);
+    }
+    return {
+      email: '',
+      password: '',
+      name: '',
+      gender: '',
+      selections: [], // { categoryCode, optionLabel, rank } 배열
+    };
+  };
+
+  const [onboardingData, setOnboardingData] = useState(loadStoredData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
   // 최신 onboardingData를 추적하기 위한 ref
   const onboardingDataRef = useRef(onboardingData);
   
-  // onboardingData가 변경될 때마다 ref 업데이트
+  // onboardingData가 변경될 때마다 ref 업데이트 및 localStorage 저장
   useEffect(() => {
     onboardingDataRef.current = onboardingData;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(onboardingData));
+    } catch (error) {
+      console.error('Failed to save onboarding data to localStorage:', error);
+    }
   }, [onboardingData]);
-  
+
+  // URL 라우트가 변경되면 currentStep 업데이트
+  useEffect(() => {
+    const routeName = params.step || 'email-password';
+    const stepFromRoute = ROUTE_TO_STEP[routeName] || 1;
+    if (stepFromRoute >= 1 && stepFromRoute <= TOTAL_STEPS) {
+      setCurrentStep(stepFromRoute);
+    } else {
+      navigate('/onboarding/email-password', { replace: true });
+    }
+  }, [params.step, navigate]);
+
   // location.state에서 회원가입 정보 가져오기 (이메일, 비밀번호 등)
   const registrationInfo = location.state || {};
 
@@ -52,18 +110,23 @@ export default function useOnboarding() {
 
   // 다음 단계로 이동
   const handleNext = async () => {
+    // 마지막 단계가 아니면 다음 단계로 이동
     if (currentStep < TOTAL_STEPS) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // 마지막 단계: 온보딩 완료
-      await handleComplete();
+      const nextStep = currentStep + 1;
+      const nextRoute = STEP_ROUTES[nextStep];
+      setCurrentStep(nextStep);
+      navigate(`/onboarding/${nextRoute}`, { replace: true });
     }
+    // handleComplete는 PersonalityStep에서 마지막 단계일 때만 호출됨
   };
 
   // 이전 단계로 이동
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      const prevStep = currentStep - 1;
+      const prevRoute = STEP_ROUTES[prevStep];
+      setCurrentStep(prevStep);
+      navigate(`/onboarding/${prevRoute}`, { replace: true });
     }
   };
 
@@ -150,22 +213,33 @@ export default function useOnboarding() {
           }, { skipUserProfile: true });
           
           // 자동 로그인 성공 시 홈으로 이동
+          // localStorage에서 온보딩 데이터 삭제
+          localStorage.removeItem(STORAGE_KEY);
           navigate('/');
           return;
         } catch {
           // 로그인 실패 시 로그인 페이지로 이동
           // (에러 메시지 출력하지 않음 - 서버가 아직 준비되지 않았을 수 있음)
+          localStorage.removeItem(STORAGE_KEY);
           navigate('/login');
           return;
         }
       }
 
       // 회원가입만 성공하고 자동 로그인을 시도하지 않은 경우 홈으로 이동
+      localStorage.removeItem(STORAGE_KEY);
       navigate('/');
     } catch (err) {
       console.error('회원가입 실패:', err);
       setError(err);
       const errorMessage = err.response?.data?.message || err.message || '회원가입 중 오류가 발생했습니다.';
+      
+      // 이메일 중복 에러인 경우 첫 단계로 이동
+      if (errorMessage.includes('이메일') || errorMessage.includes('email') || errorMessage.includes('중복') || errorMessage.includes('duplicate')) {
+        navigate('/onboarding/email-password', { replace: true });
+        setCurrentStep(1);
+      }
+      
       alert(errorMessage);
     } finally {
       setLoading(false);

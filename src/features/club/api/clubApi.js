@@ -92,6 +92,8 @@ export const getClubMembers = async (clubId, active = true) => {
     // 백엔드 응답을 프론트엔드 형식으로 변환
     return {
       ...data,
+      // activeMemberCount가 있으면 memberCount로 변환
+      memberCount: data.memberCount !== undefined ? data.memberCount : (data.activeMemberCount !== undefined ? data.activeMemberCount : 0),
       rankings: data.rankings ? transformMemberData(data.rankings) : [],
       members: data.members ? transformMemberData(data.members) : [],
     };

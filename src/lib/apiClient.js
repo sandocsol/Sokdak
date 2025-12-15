@@ -57,7 +57,7 @@ apiClient.interceptors.response.use(
     const status = error.response?.status;
     const currentPath = window.location.pathname;
     const publicPaths = ['/onboarding', '/login'];
-    const isPublicPath = publicPaths.some(path => currentPath === path || currentPath.startsWith(path));
+    const isPublicPath = publicPaths.some(path => currentPath === path || currentPath.startsWith(path + '/'));
     
     if (status === 401) {
       // SKIP_AUTH가 true이면 리다이렉트하지 않음 (다른 기능 테스트 가능)
@@ -158,6 +158,7 @@ export const API_ENDPOINTS = {
   // 랭킹 관련
   RANKING: {
     GET: '/api/ranking',
+    GET_CLUB_SENT: (clubId, limit) => `/api/rankings/clubs/${clubId}/sent?limit=${limit || 3}`,
   },
 
   // 뱃지 관련

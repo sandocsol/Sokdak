@@ -42,6 +42,17 @@ const InputContainer = styled.div`
   gap: 18px;
 `;
 
+// 에러 메시지
+const ErrorMessage = styled.div`
+  color: #ff6b6b;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 0 30px;
+  margin-top: -10px;
+  text-align: center;
+`;
+
 const Input = styled.input`
   width: 100%;
   max-width: 333px;
@@ -99,11 +110,36 @@ export default function EmailPasswordStep({ currentStep = 1, totalSteps = 7, dat
   const [email, setEmail] = useState(data.email || '');
   const [password, setPassword] = useState(data.password || '');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [hasCheckedEmail, setHasCheckedEmail] = useState(false); // 이메일 형식 검증 완료 여부
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
+    setEmailError(''); // 이메일 변경 시 에러 메시지 초기화
+    setHasCheckedEmail(false); // 이메일 변경 시 체크 상태 초기화
     onUpdate({ email: value });
+  };
+
+  // 이메일 입력 필드에서 포커스를 잃을 때 중복 체크
+  const handleEmailBlur = async () => {
+    const trimmedEmail = email.trim();
+    
+    // 이메일이 비어있으면 체크하지 않음
+    if (!trimmedEmail) {
+      return;
+    }
+
+    // 이메일 형식 검증
+    if (!isValidEmail(trimmedEmail)) {
+      setEmailError('올바른 이메일 형식을 입력해주세요.');
+      setHasCheckedEmail(false);
+      return;
+    }
+
+    // 이메일 형식만 검증 (중복 확인은 회원가입 시 처리)
+    setEmailError('');
+    setHasCheckedEmail(true);
   };
 
   const handlePasswordChange = (e) => {
@@ -117,10 +153,20 @@ export default function EmailPasswordStep({ currentStep = 1, totalSteps = 7, dat
     setPasswordConfirm(value);
   };
 
-  const handleNextClick = () => {
-    if (email.trim() && password.trim() && password === passwordConfirm) {
-      onNext();
+  const handleNextClick = async () => {
+    if (!email.trim() || !password.trim() || password !== passwordConfirm) {
+      return;
     }
+
+    // 이메일 형식 검증
+    if (!isValidEmail(email)) {
+      setEmailError('올바른 이메일 형식을 입력해주세요.');
+      return;
+    }
+
+    // 이메일 형식이 올바르면 다음 단계로 진행
+    // 실제 이메일 중복 확인은 마지막 단계에서 회원가입 시 처리됨
+    onNext();
   };
 
   // 이메일 형식 검증
@@ -132,7 +178,8 @@ export default function EmailPasswordStep({ currentStep = 1, totalSteps = 7, dat
   // 비밀번호 일치 검증
   const isPasswordMatch = password === passwordConfirm && passwordConfirm.trim() !== '';
 
-  const isNextDisabled = !email.trim() || !password.trim() || !passwordConfirm.trim() || !isValidEmail(email) || password.length < 6 || !isPasswordMatch;
+  // 다음 버튼 비활성화 조건: 입력값이 없거나, 이메일 형식이 잘못되었거나, 비밀번호가 짧거나, 비밀번호가 일치하지 않거나, 이메일 에러가 있을 때
+  const isNextDisabled = !email.trim() || !password.trim() || !passwordConfirm.trim() || !isValidEmail(email) || password.length < 6 || !isPasswordMatch || !!emailError;
 
   return (
     <Container>
@@ -147,9 +194,15 @@ export default function EmailPasswordStep({ currentStep = 1, totalSteps = 7, dat
           type="email"
           value={email}
           onChange={handleEmailChange}
+          onBlur={handleEmailBlur}
           placeholder="이메일을 입력하세요"
           autoFocus
         />
+        {emailError && (
+          <ErrorMessage>
+            {emailError}
+          </ErrorMessage>
+        )}
         <Input
           type="password"
           value={password}
