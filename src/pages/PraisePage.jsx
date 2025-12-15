@@ -10,7 +10,8 @@ import MemberSelector from "../features/praise/components/MemberSelector.jsx";
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
   background: #222222;
   position: relative;
@@ -20,7 +21,7 @@ const Container = styled.div`
 
 const Header = styled.div`
   position: relative;
-  padding-top: 61px; /* StatusBar 높이 */
+  padding-top: 0;
   padding-bottom: 20px;
 `;
 
@@ -82,7 +83,7 @@ const Title = styled.h2`
   line-height: 26px;
   color: white;
   text-align: center;
-  margin-top: 22px;
+  margin-top: 8px;
   margin-bottom: 0;
 `;
 
@@ -91,12 +92,11 @@ const BackButtonWrapper = styled.div`
   justify-content: flex-start;
   width: 100%;
   padding-left: 27px;
-  margin-top: 20px;
 `;
 
 const CategoryCard = styled.div`
   width: 322px;
-  height: 156px;
+  padding: 32px;
   background: #353535;
   border-radius: 10px;
   margin: 0 auto;
@@ -127,7 +127,7 @@ const OptionsRow = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 338px; /* MemberSelector 그리드 너비: (160px * 2) + 18px gap */
-  margin: 54px auto 10px auto;
+  margin: 40px auto 10px auto;
 `;
 
 const CheckboxContainer = styled.div`
@@ -223,11 +223,28 @@ const OptionButton = styled.button`
 
 const ContentWrapper = styled.div`
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  padding-bottom: 20px;
   min-height: 0; /* flex item이 overflow를 제대로 처리하도록 */
+  padding-bottom: 20px;
+`;
+
+const ScrollableContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+`;
+
+const MemberSelectorWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-bottom: 20px;
 `;
 
 const SendButton = styled.button`
@@ -240,7 +257,7 @@ const SendButton = styled.button`
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  margin-top: auto;
+  margin-top: 20px;
   margin-bottom: 20px;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   flex-shrink: 0;
@@ -443,33 +460,37 @@ export default function PraisePage() {
       </Header>
 
       <ContentWrapper>
-        <CategoryCard>
-          <Emoji>{currentCategory.emoji}</Emoji>
-          <CategoryText>{currentCategory.text}</CategoryText>
-        </CategoryCard>
+        <ScrollableContent>
+          <CategoryCard>
+            <Emoji>{currentCategory.emoji}</Emoji>
+            <CategoryText>{currentCategory.text}</CategoryText>
+          </CategoryCard>
 
-        <OptionsRow>
-          <CheckboxContainer>
-            <Checkbox
-              type="checkbox"
-              id="anonymous"
-              checked={isAnonymous}
-              onChange={(e) => setIsAnonymous(e.target.checked)}
+          <OptionsRow>
+            <CheckboxContainer>
+              <Checkbox
+                type="checkbox"
+                id="anonymous"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+              />
+              <CheckboxLabel htmlFor="anonymous">익명</CheckboxLabel>
+            </CheckboxContainer>
+            
+            <OptionButton onClick={handleSkip}>
+              건너뛰기
+              <SkipIcon />
+            </OptionButton>
+          </OptionsRow>
+
+          <MemberSelectorWrapper>
+            <MemberSelector
+              users={users}
+              selectedUserId={selectedUserId}
+              onSelect={setSelectedUserId}
             />
-            <CheckboxLabel htmlFor="anonymous">익명</CheckboxLabel>
-          </CheckboxContainer>
-          
-          <OptionButton onClick={handleSkip}>
-            건너뛰기
-            <SkipIcon />
-          </OptionButton>
-        </OptionsRow>
-
-        <MemberSelector
-          users={users}
-          selectedUserId={selectedUserId}
-          onSelect={setSelectedUserId}
-        />
+          </MemberSelectorWrapper>
+        </ScrollableContent>
 
         <SendButton onClick={handleSend} disabled={selectedUserId === null || sending}>
           {sending ? '전송 중...' : '보내기'}
