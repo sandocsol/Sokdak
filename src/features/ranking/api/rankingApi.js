@@ -28,27 +28,72 @@ const transformMemberData = (memberOrMembers) => {
 };
 
 /**
- * 랭킹 데이터를 가져오는 API 함수
- * @returns {Promise} 랭킹 데이터 (complimentKings, clubRankings 포함)
+ * 전체 칭찬왕 랭킹을 가져오는 API 함수
+ * @param {number} limit - 가져올 랭킹 개수 (기본값: 10)
+ * @returns {Promise<Array>} 랭킹 데이터 배열 [{ rank, id, name, profileImage, sentCount }, ...]
  */
-export const getRankings = async () => {
+export const getGlobalSentRankings = async (limit = 10) => {
   let endpoint;
   if (USE_MOCK_DATA) {
     // 목 데이터 경로: /data/rankings.json
     endpoint = getApiUrl('/data/rankings.json');
+    const response = await apiClient.get(endpoint);
+    const data = response.data;
+    // 목 데이터에서 complimentKings만 반환
+    return data.complimentKings ? transformMemberData(data.complimentKings.slice(0, limit)) : [];
   } else {
-    // 실제 API 경로: /api/ranking
-    endpoint = API_ENDPOINTS.RANKING.GET;
+    // 실제 API 경로: /api/rankings/global/sent?limit={limit}
+    endpoint = API_ENDPOINTS.RANKING.GET_GLOBAL_SENT(limit);
+    const response = await apiClient.get(endpoint);
+    const data = response.data;
+    
+    // 백엔드 응답을 프론트엔드 형식으로 변환
+    // 응답: [{ rank, userId, name, avatarUrl, sentCount }, ...]
+    return transformMemberData(Array.isArray(data) ? data : []);
   }
-  const response = await apiClient.get(endpoint);
-  const data = response.data;
-  
-  // 백엔드 응답을 프론트엔드 형식으로 변환
-  return {
-    ...data,
-    complimentKings: data.complimentKings ? transformMemberData(data.complimentKings) : [],
-    clubRankings: data.clubRankings || [],
-  };
+};
+
+/**
+ * 동아리 전체 칭찬 보낸 랭킹을 가져오는 API 함수
+ * @param {number} limit - 가져올 랭킹 개수 (기본값: 10)
+ * @returns {Promise<Array>} 랭킹 데이터 배열 [{ rank, userId, name, avatarUrl, sentCount }, ...]
+ * name은 동아리 이름이며, clubName으로 변환됨
+ * rank는 배열 순서에 따라 1, 2, 3... 으로 할당됨 (API의 rank 필드는 무시)
+ */
+export const getClubsSentRankings = async (limit = 10) => {
+  let endpoint;
+  if (USE_MOCK_DATA) {
+    // 목 데이터 경로: /data/rankings.json
+    endpoint = getApiUrl('/data/rankings.json');
+    const response = await apiClient.get(endpoint);
+    const data = response.data;
+    // 목 데이터에서 clubRankings만 반환하고 name을 clubName으로 변환
+    // 배열 순서에 따라 rank를 할당 (1부터 시작)
+    const clubRankings = (data.clubRankings || []).slice(0, limit).map((club, index) => ({
+      ...club,
+      clubName: club.clubName || club.name,
+      rank: index + 1, // 배열 순서에 따라 rank 할당
+    }));
+    return clubRankings;
+  } else {
+    // 실제 API 경로: /api/rankings/clubs/sent?limit={limit}
+    endpoint = API_ENDPOINTS.RANKING.GET_CLUBS_SENT(limit);
+    const response = await apiClient.get(endpoint);
+    const data = response.data;
+    
+    // 백엔드 응답을 프론트엔드 형식으로 변환
+    // 응답: [{ rank, userId, name, avatarUrl, sentCount }, ...]
+    // name을 clubName으로 변환
+    // 배열 순서에 따라 rank를 할당 (1부터 시작, API의 rank 필드는 무시)
+    return Array.isArray(data) ? data.map((item, index) => ({
+      rank: index + 1, // 배열 순서에 따라 rank 할당
+      userId: item.userId,
+      clubName: item.name, // name을 clubName으로 변환
+      avatarUrl: item.avatarUrl,
+      sentCount: item.sentCount,
+      receivedCount: item.receivedCount, // receivedCount가 있을 경우 포함
+    })) : [];
+  }
 };
 
 /**

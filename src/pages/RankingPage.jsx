@@ -39,19 +39,32 @@ const SectionTitle = styled.h2`
 const ComplimentKingsContainer = styled.div`
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 13px;
   padding: 0 0 20px 0;
   position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 `;
 
 const KingCard = styled.div`
   position: relative;
-  width: 109px;
+  width: 100px;
+  min-width: 100px;
+  flex-shrink: 0;
   height: ${(props) => {
-    if (props.$rank === 1) return "189px";
-    if (props.$rank === 2) return "189px";
-    return "189px";
+    if (props.$rank === 1) return "140px";
+    if (props.$rank === 2) return "140px";
+    return "140px";
   }};
   border: 1px solid #585858;
   border-radius: 20px;
@@ -59,7 +72,8 @@ const KingCard = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 22px;
+  padding-top: 16px;
+  padding-bottom: 16px;
   background: transparent;
 `;
 
@@ -68,7 +82,7 @@ const ProfileImage = styled.div`
   height: 50px;
   border-radius: 50%;
   background: #585858;
-  margin-bottom: 8px;
+  margin-bottom: 15px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -106,8 +120,6 @@ const KingInfo = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0;
-  margin-top: auto;
-  padding-bottom: 20px;
 `;
 
 const ClubRankingList = styled.div`
@@ -178,6 +190,12 @@ export default function RankingPage() {
 
   // 1등부터 순서대로 정렬
   const orderedKings = [...complimentKings].sort((a, b) => a.rank - b.rank);
+  
+  // 동아리 랭킹은 배열 순서에 따라 rank를 할당 (API의 rank 필드는 무시)
+  const clubRankingsWithOrderedRank = clubRankings.map((club, index) => ({
+    ...club,
+    rank: index + 1, // 배열 순서에 따라 rank 할당
+  }));
 
   if (loading) {
     return (
@@ -212,7 +230,7 @@ export default function RankingPage() {
       <Section>
         <SectionTitle style={{ paddingTop: "20px" }}>동아리 랭킹</SectionTitle>
         <ClubRankingList>
-          {clubRankings.map((club) => (
+          {clubRankingsWithOrderedRank.map((club) => (
             <ClubRankingItem key={club.rank}>
               <ClubRankNumber $rank={club.rank}>{club.rank}</ClubRankNumber>
               <ClubInfo>

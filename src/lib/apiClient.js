@@ -157,7 +157,8 @@ export const API_ENDPOINTS = {
 
   // 랭킹 관련
   RANKING: {
-    GET: '/api/ranking',
+    GET_GLOBAL_SENT: (limit) => `/api/rankings/global/sent?limit=${limit || 10}`,
+    GET_CLUBS_SENT: (limit) => `/api/rankings/clubs/sent?limit=${limit || 10}`,
     GET_CLUB_SENT: (clubId, limit) => `/api/rankings/clubs/${clubId}/sent?limit=${limit || 3}`,
   },
 
