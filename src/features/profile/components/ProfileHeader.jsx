@@ -328,9 +328,6 @@ export default function ProfileHeader({ profile: profileProp }) {
             alt={profile.name}
             $isPlaceholder={!profile.profileImage || profile.profileImage.includes('profile.svg')}
           />
-          <AddButton onClick={handleAddClick} aria-label="프로필 이미지 추가">
-            <AddButtonText>+</AddButtonText>
-          </AddButton>
         </ProfileImageWrapper>
 
         <ProfileInfo>
