@@ -95,7 +95,7 @@ export default function MyPage() {
           <MessagesContainer>
             {messages.length > 0 ? (
               messages.map((message) => (
-                <PraiseMessage key={message.id} message={message} />
+                <PraiseMessage key={message.id} message={message} isSent={activeTab === "sent"} />
               ))
             ) : (
               <p style={{ color: "#ffffff", textAlign: "center", padding: "20px" }}>메시지가 없습니다.</p>

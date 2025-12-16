@@ -62,7 +62,7 @@ const MessageContent = styled.p`
   word-wrap: break-word;
 `;
 
-export default function PraiseMessage({ message }) {
+export default function PraiseMessage({ message, isSent = false }) {
   if (!message) return null;
 
   // gender에 따라 테두리 색상과 버블 아이콘 결정
@@ -72,10 +72,14 @@ export default function PraiseMessage({ message }) {
       ? "/assets/blue-bubble.png"
       : "/assets/orenge-bubble.png";
 
-  // 표시할 이름 (익명이면 "익명", 아니면 실제 이름)
-  const displayName = message.isAnonymous
-    ? "익명"
-    : message.senderName || message.receiverName;
+  // 표시할 이름
+  // 보낸 메시지는 anonymity와 관계없이 항상 실명 표시
+  // 받은 메시지는 anonymity가 true면 "익명", false면 실명 표시
+  const displayName = isSent
+    ? (message.receiverName || message.name)
+    : (message.isAnonymous || message.anonymity
+      ? "익명"
+      : (message.senderName || message.name));
 
   return (
     <MessageCard $borderColor={borderColor}>
