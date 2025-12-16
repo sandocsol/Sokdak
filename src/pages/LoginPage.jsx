@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useAuth } from '../features/auth/useAuth.js';
 
 const Container = styled.div`
@@ -11,6 +11,16 @@ const Container = styled.div`
   flex-direction: column;
   position: relative;
   overflow: hidden;
+`;
+
+// 둥둥 떠다니는 애니메이션
+const float = keyframes`
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-25px);
+  }
 `;
 
 // 로고 영역
@@ -28,6 +38,8 @@ const LogoContainer = styled.div`
 const LogoImage1 = styled.img`
   width: 182px;
   height: 211px;
+  animation: ${float} 3s ease-in-out infinite;
+  animation-fill-mode: both;
 `;
 
 const LogoImage2 = styled.img`
