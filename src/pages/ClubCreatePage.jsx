@@ -9,14 +9,35 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   background: #222222;
+  display: flex;
+  flex-direction: column;
   position: relative;
   overflow: hidden;
 `;
 
+// 진행 바 wrapper
+const ProgressBarWrapper = styled.div`
+  padding: clamp(40px, 10vh, 101px) 30px 30px 30px;
+  flex-shrink: 0;
+  width: 100%;
+  
+  @media (max-height: 700px) {
+    padding: 30px 30px 30px 30px;
+  }
+`;
+
+// 뒤로가기 버튼 wrapper
+const BackButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 27px;
+  margin-top: 10px;
+  flex-shrink: 0;
+`;
+
+// 뒤로가기 버튼
 const BackButton = styled.button`
-  position: absolute;
-  left: 23px;
-  top: 139px;
   width: 40px;
   height: 40px;
   background: none;
@@ -26,33 +47,33 @@ const BackButton = styled.button`
   align-items: center;
   justify-content: center;
   padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   
-  &:hover {
-    opacity: 0.8;
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
   }
   
   &:active {
-    opacity: 0.6;
+    opacity: 0.8;
+    outline: none;
+    box-shadow: none;
   }
   
   img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-  }
-`;
-
-const ProgressBarWrapper = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 97px;
-  transform: translateX(-50%);
-  width: 333px;
-  padding: 0 30px;
-  
-  @media (max-height: 700px) {
-    top: 30px;
-    padding: 30px 30px 30px 30px;
   }
 `;
 
@@ -63,20 +84,27 @@ const Title = styled.p`
   line-height: 26px;
   color: #cfcfcf;
   margin: 0;
-  position: absolute;
-  left: 30px;
-  top: 202px;
-  width: 311px;
+  padding: 0 40px;
+  margin-top: 20px;
+  flex-shrink: 0;
   text-align: left;
 `;
 
 // Step 1: 동아리명 입력
 const NameInputContainer = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 255px;
-  transform: translateX(-50%);
-  width: 333px;
+  padding: clamp(15px, 3vh, 28px) 30px 0 30px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  
+  @media (max-height: 700px) {
+    padding: 15px 30px 0 30px;
+  }
+`;
+
+const NameInputWrapper = styled.div`
+  width: 100%;
+  max-width: 333px;
   height: 50px;
   background: ${(props) => (props.focused ? "#585858" : "#585858")};
   border: ${(props) => (props.focused ? "1px solid #2AB7CA" : "none")};
@@ -130,11 +158,21 @@ const SearchIconSvg = () => (
 
 // Step 2: 동아리 설명 입력
 const DescriptionContainer = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 256px;
-  transform: translateX(-50%);
-  width: 330px;
+  padding: clamp(15px, 3vh, 28px) 30px 0 30px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  
+  @media (max-height: 700px) {
+    padding: 15px 30px 0 30px;
+  }
+`;
+
+const DescriptionWrapper = styled.div`
+  width: 100%;
+  max-width: 330px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -175,20 +213,17 @@ const CharacterCount = styled.p`
 
 const CreateButton = styled.button`
   position: absolute;
+  bottom: clamp(20px, 5vh, 50px);
   left: 50%;
-  top: 707px;
   transform: translateX(-50%);
   width: 333px;
+  max-width: calc(100% - 60px);
   height: 50px;
+  padding: 11px 77px;
   background: ${(props) => (props.disabled ? "#B9D0D3" : "#2AB7CA")};
   border: none;
   border-radius: 10px;
-  padding: 11px 77px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.5);
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-weight: 600;
   font-size: 16px;
@@ -196,9 +231,15 @@ const CreateButton = styled.button`
   color: white;
   text-align: center;
   white-space: nowrap;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  outline: none;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
-  &:hover {
-    opacity: ${(props) => (props.disabled ? 1 : 0.9)};
+  @media (max-height: 700px) {
+    bottom: 20px;
   }
   
   &:active {
@@ -300,29 +341,33 @@ export default function ClubCreatePage() {
 
   return (
     <Container>
-      <BackButton onClick={handleBack}>
-        <img src="/assets/Chevron_Left.svg" alt="뒤로 가기" />
-      </BackButton>
-
       <ProgressBarWrapper>
         <ProgressBar currentStep={step} totalSteps={2} />
       </ProgressBarWrapper>
+      
+      <BackButtonWrapper>
+        <BackButton onClick={handleBack}>
+          <img src="/assets/Chevron_Left.svg" alt="뒤로 가기" />
+        </BackButton>
+      </BackButtonWrapper>
 
       {step === 1 && (
         <>
           <Title>동아리명을 입력해주세요</Title>
-          <NameInputContainer focused={nameFocused}>
-            <NameInput
-              type="text"
-              placeholder="동아리 이름"
-              value={name}
-              onChange={handleNameChange}
-              onFocus={() => setNameFocused(true)}
-              onBlur={() => setNameFocused(false)}
-            />
-            <SearchIcon>
-              <SearchIconSvg />
-            </SearchIcon>
+          <NameInputContainer>
+            <NameInputWrapper focused={nameFocused}>
+              <NameInput
+                type="text"
+                placeholder="동아리 이름"
+                value={name}
+                onChange={handleNameChange}
+                onFocus={() => setNameFocused(true)}
+                onBlur={() => setNameFocused(false)}
+              />
+              <SearchIcon>
+                <SearchIconSvg />
+              </SearchIcon>
+            </NameInputWrapper>
           </NameInputContainer>
         </>
       )}
@@ -331,13 +376,15 @@ export default function ClubCreatePage() {
         <>
           <Title>동아리에 대한 설명을 남겨주세요</Title>
           <DescriptionContainer>
-            <DescriptionTextarea
-              placeholder="설명 입력"
-              value={description}
-              onChange={handleDescriptionChange}
-              hasValue={description.length > 0}
-            />
-            <CharacterCount>{description.length}/30</CharacterCount>
+            <DescriptionWrapper>
+              <DescriptionTextarea
+                placeholder="설명 입력"
+                value={description}
+                onChange={handleDescriptionChange}
+                hasValue={description.length > 0}
+              />
+              <CharacterCount>{description.length}/30</CharacterCount>
+            </DescriptionWrapper>
           </DescriptionContainer>
         </>
       )}
